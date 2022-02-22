@@ -1,0 +1,86 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.azerfon.sigtran.m3ua.asp;
+
+import javolution.util.FastList;
+
+/**
+ *
+ * @author eatakishiyev
+ */
+public class WeightedRoundRobinAlgo {
+
+    private int i = -1;
+    private int cw = 0;
+    private FastList<AspInstance> instances;
+
+    public WeightedRoundRobinAlgo(FastList<AspInstance> instances) {
+        this.instances = instances;
+    }
+
+    public AspInstance schedule() {
+        int[] y = new int[instances.size()];
+        for (int a = 0; a < instances.size(); a++) {
+            y[a] = instances.get(a).getAsp().getDistributionRatio();
+        }
+        while (true) {
+            i = (i + 1) % instances.size();
+            if (i == 0) {
+
+                cw = cw - this.getGdc(y);
+                if (cw <= 0) {
+                    cw = maxValue(y);
+                    if (cw == 0) {
+                        return null;
+                    }
+                }
+            }
+            if (instances.get(i).getAsp().getDistributionRatio() >= cw) {
+                return instances.get(i);
+            }
+        }
+    }
+
+    private int getGdc(int... x) {
+        // get the smallest of all number no need to check for higher values
+        int smallest = getSmallest(x);
+
+        for (int k = smallest; k >= 1; k--) {
+            int j;
+            for (j = 0; j < x.length; ++j) {
+                if (x[j] % k != 0) {
+                    break;
+                }
+            }
+            // if we pass through the array with all % == 0 return the value
+            if (j == x.length) {
+                return k;
+            }
+        }
+        // so the only possible is 1
+        return 1;
+    }
+
+// return smallest number of an array of int
+    private int getSmallest(int[] x) {
+        int smallest = x[0];
+        for (int j = 1; j < x.length; ++j) {
+            if (x[j] < smallest) {
+                smallest = x[j];
+            }
+        }
+        return smallest;
+    }
+
+    private int maxValue(int[] chars) {
+        int max = chars[0];
+        for (int ktr = 0; ktr < chars.length; ktr++) {
+            if (chars[ktr] > max) {
+                max = chars[ktr];
+            }
+        }
+        return max;
+    }
+}

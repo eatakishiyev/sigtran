@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+    TODO define vocabulary identification
+    PUBLIC ID: -//vendor//vocabulary//EN
+    SYSTEM ID: http://server/path/sctp.dtd
+
+-->
+
+<!--
+    An example how to use this DTD from your XML document:
+
+    <?xml version="1.0"?>
+
+    <!DOCTYPE config SYSTEM "sctp.dtd">
+
+    <config>
+    ...
+    </config>
+-->
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT config (associations?)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT associations (association?)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT association (additionalAddress)*>
+<!ATTLIST association
+    outStreams CDATA #REQUIRED
+    inStreams CDATA #REQUIRED
+    remotePort CDATA #REQUIRED
+    remoteHost CDATA #REQUIRED
+    localPort CDATA #REQUIRED
+    localHost CDATA #REQUIRED
+    type (CLIENT|SERVER) #REQUIRED
+    name CDATA #REQUIRED
+	noDelay CDATA #IMPLIED
+	soSndBuf CDATA #IMPLIED
+	soRcvBuf CDATA #IMPLIED
+  >
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT additionalAddress EMPTY>
+<!ATTLIST additionalAddress
+    value CDATA #IMPLIED
+  >

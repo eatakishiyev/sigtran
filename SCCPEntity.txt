@@ -1,0 +1,5 @@
+The combination of mtp_ni, mtp_pc and mtp_si define the MTP Service Access Point (MTP-SAP).
+
+               |-------MTP SAP------------|
+SCCPEntity = MTP_NI + MTP_OPC + MPT_SI + DPC + SSN
+               |-------MTP SAP------------|

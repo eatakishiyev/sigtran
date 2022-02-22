@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE config SYSTEM "sctp.dtd">
+<config>
+    <association name="assoc1" type="CLIENT" localHost="192.168.1.1" localPort="2905" remoteHost="192.168.2.1" remotePort="2905" inStreams="3" outStreams="5" noDelay="false" soSndBuf="2048" soRcvBuf="2048" auto_reconnect="true" writer_thread_count="2">
+        <additionalAddress value="192.168.2.3"/>
+		<additionalAddress value="10.1.1.1"/>
+    </association>
+    <association name="assoc2" type="CLIENT" localHost="192.168.1.4" localPort="2901" remoteHost="192.168.2.2" remotePort="2901" inStreams="3" outStreams="5" mode="ACTIVE" auto_reconnect="false"/>
+		
+	<association name="assoc3" type="SERVER" localHost="192.168.1.4" localPort="2902" inStreams="4" outStreams="5">
+		<association name="assoc4" type="CLIENT" localHost="192.168.1.4" localPort="2901" remoteHost="192.168.2.2" remotePort="2901" mode="PASSIVE"  writer_thread_count="2"/>
+		<association name="assoc5" type="CLIENT" localHost="192.168.1.4" localPort="2901" remoteHost="192.168.2.2" remotePort="2901" mode="PASSIVE"/>
+	</association>
+</config>
