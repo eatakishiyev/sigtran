@@ -4,81 +4,39 @@
  */
 package dev.ocean.sigtran.tcap;
 
-import dev.ocean.sigtran.tcap.primitives.tr.TRNotice;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
-import org.apache.logging.log4j.*;
 import dev.ocean.sigtran.sccp.address.SCCPAddress;
 import dev.ocean.sigtran.sccp.general.ErrorReason;
-import dev.ocean.sigtran.tcap.components.ComponentFactory;
-import dev.ocean.sigtran.tcap.components.InvokeImpl;
-import dev.ocean.sigtran.tcap.components.RejectImpl;
-import dev.ocean.sigtran.tcap.components.ReturnErrorImpl;
-import dev.ocean.sigtran.tcap.components.ReturnResultLastImpl;
-import dev.ocean.sigtran.tcap.components.ReturnResultNotLastImpl;
-import dev.ocean.sigtran.tcap.components.UnknownComponent;
-import dev.ocean.sigtran.tcap.dialogueAPDU.DialogueAbort;
-import dev.ocean.sigtran.tcap.dialogueAPDU.DialogueFactory;
-import dev.ocean.sigtran.tcap.dialogueAPDU.DialoguePortionImpl;
-import dev.ocean.sigtran.tcap.dialogueAPDU.DialogueRequest;
-import dev.ocean.sigtran.tcap.dialogueAPDU.DialogueResponse;
+import dev.ocean.sigtran.tcap.components.*;
+import dev.ocean.sigtran.tcap.dialogueAPDU.*;
 import dev.ocean.sigtran.tcap.dialogues.intrefaces.DialoguePDU;
-import dev.ocean.sigtran.tcap.messages.AbortMessageImpl;
-import dev.ocean.sigtran.tcap.messages.BeginMessageImpl;
-import dev.ocean.sigtran.tcap.messages.ContinueMessageImpl;
-import dev.ocean.sigtran.tcap.messages.EndMessageImpl;
-import dev.ocean.sigtran.tcap.messages.MessageFactory;
+import dev.ocean.sigtran.tcap.messages.*;
 import dev.ocean.sigtran.tcap.messages.exceptions.IncorrectSyntaxException;
-import dev.ocean.sigtran.tcap.parameters.AbortSource;
-import dev.ocean.sigtran.tcap.parameters.ApplicationContextImpl;
-import dev.ocean.sigtran.tcap.parameters.AssociateResult;
-import dev.ocean.sigtran.tcap.parameters.AssociateSourceDiagnostic;
-import dev.ocean.sigtran.tcap.parameters.ComponentType;
-import dev.ocean.sigtran.tcap.parameters.ErrorCodeImpl;
-import dev.ocean.sigtran.tcap.parameters.GeneralProblem;
-import dev.ocean.sigtran.tcap.parameters.InvokeProblem;
-import dev.ocean.sigtran.tcap.parameters.ObjectIdentifiers;
-import dev.ocean.sigtran.tcap.parameters.OperationCodeImpl;
-import dev.ocean.sigtran.tcap.parameters.ParameterFactory;
-import dev.ocean.sigtran.tcap.parameters.ParameterImpl;
-import dev.ocean.sigtran.tcap.parameters.ProblemImpl;
-import dev.ocean.sigtran.tcap.parameters.Result;
-import dev.ocean.sigtran.tcap.parameters.ReturnErrorProblem;
-import dev.ocean.sigtran.tcap.parameters.ReturnResultProblem;
+import dev.ocean.sigtran.tcap.parameters.*;
 import dev.ocean.sigtran.tcap.parameters.interfaces.Component;
 import dev.ocean.sigtran.tcap.parameters.interfaces.DialogueServiceProviderDiagnostic;
 import dev.ocean.sigtran.tcap.parameters.interfaces.DialogueServiceUserDiagnostic;
 import dev.ocean.sigtran.tcap.primitives.AbortReason;
-import dev.ocean.sigtran.tcap.primitives.tc.Operation;
-import dev.ocean.sigtran.tcap.primitives.tc.OperationClass;
-import dev.ocean.sigtran.tcap.primitives.tc.PAbortCause;
-import dev.ocean.sigtran.tcap.primitives.tc.TCBegin;
-import dev.ocean.sigtran.tcap.primitives.tc.TCContinue;
-import dev.ocean.sigtran.tcap.primitives.tc.TCEnd;
-import dev.ocean.sigtran.tcap.primitives.tc.TCInvoke;
-import dev.ocean.sigtran.tcap.primitives.tc.TCLReject;
-import dev.ocean.sigtran.tcap.primitives.tc.TCPAbort;
-import dev.ocean.sigtran.tcap.primitives.tc.TCRReject;
-import dev.ocean.sigtran.tcap.primitives.tc.TCResult;
-import dev.ocean.sigtran.tcap.primitives.tc.TCResultNotLast;
-import dev.ocean.sigtran.tcap.primitives.tc.TCUAbort;
-import dev.ocean.sigtran.tcap.primitives.tc.TCUError;
-import dev.ocean.sigtran.tcap.primitives.tc.TCUReject;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import dev.ocean.sigtran.tcap.primitives.tc.*;
+import dev.ocean.sigtran.tcap.primitives.tr.TRNotice;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
- *
  * @author eatakishiyev
  */
 public class TCAPDialogue implements Runnable {
@@ -111,11 +69,6 @@ public class TCAPDialogue implements Runnable {
         this.qos = qos;
         this.state = TCAPDialogueState.IDLE;
         this.keepAliveTask = tcapStack.keepAliveScheduler.schedule(this, tcapStack.keepAliveTime, TimeUnit.SECONDS);
-    }
-
-    public TCAPDialogue(byte[] data) throws Exception {
-        this.deseraialize(data);
-        this.rawData = data;
     }
 
     public void userCancel(Short invokeId) throws Exception {
@@ -658,16 +611,16 @@ public class TCAPDialogue implements Runnable {
                                     throw new IncorrectSyntaxException();
                                 }
                             } else //AC mode not set
-                            if (abortMessage.getUAbortCause() != null
-                                    && abortMessage.getUAbortCause().length > 0) {
-                                throw new IncorrectSyntaxException();
-                            } else {
-                                TCUAbort tcUAbort = new TCUAbort();
-                                tcUAbort.setDialogueId(this.dialogueId);
-                                tcUAbort.setAbortReason(AbortReason.USER_SPECIFIC);
+                                if (abortMessage.getUAbortCause() != null
+                                        && abortMessage.getUAbortCause().length > 0) {
+                                    throw new IncorrectSyntaxException();
+                                } else {
+                                    TCUAbort tcUAbort = new TCUAbort();
+                                    tcUAbort.setDialogueId(this.dialogueId);
+                                    tcUAbort.setAbortReason(AbortReason.USER_SPECIFIC);
 
-                                tcapStack.onUAbort(tcUAbort);
-                            }
+                                    tcapStack.onUAbort(tcUAbort);
+                                }
                         } catch (IncorrectSyntaxException ex) {
                             TCPAbort tcPAbort = new TCPAbort();
                             tcPAbort.setDialogue(this);
@@ -1175,7 +1128,7 @@ public class TCAPDialogue implements Runnable {
         this.calledParty = calledParty;
     }
 
-//    public ComponentCoordinator getComponentCoordinator() {
+    //    public ComponentCoordinator getComponentCoordinator() {
 //        return componentCoordinator;
 //    }
     public QoS getQos() {
@@ -1352,10 +1305,9 @@ public class TCAPDialogue implements Runnable {
             }
 
             aos.FinalizeContent(position);
-
-            components.clear();
             return aos.toByteArray();
         } finally {
+            components.clear();
             mutex.unlock();
         }
     }
@@ -1870,8 +1822,8 @@ public class TCAPDialogue implements Runnable {
     @Override
     public String toString() {
         return String.format("TCAPDialogue[DialogueId = %s; remoteTransactionId = %s; "
-                + "ClngPrty = %s; CldPrty = %s; QoS = %s; ApplicationContext = %s; "
-                + "State = %s]", dialogueId, remoteTransactionId, callingParty,
+                        + "ClngPrty = %s; CldPrty = %s; QoS = %s; ApplicationContext = %s; "
+                        + "State = %s]", dialogueId, remoteTransactionId, callingParty,
                 calledParty, qos, ac, state);
     }
 
@@ -1879,7 +1831,7 @@ public class TCAPDialogue implements Runnable {
         mutex.lock();
         try {
             this.terminateAllIsms();
-            this.keepAliveTask.cancel(false);
+            this.keepAliveTask.cancel(true);
         } finally {
             mutex.unlock();
         }
