@@ -4,41 +4,30 @@
  */
 package dev.ocean.sigtran.tcap;
 
+import dev.ocean.sigtran.sccp.address.SCCPAddress;
+import dev.ocean.sigtran.sccp.general.ErrorReason;
+import dev.ocean.sigtran.sccp.general.SCCPProvider;
+import dev.ocean.sigtran.sccp.messages.MessageHandling;
+import dev.ocean.sigtran.tcap.messages.*;
+import dev.ocean.sigtran.tcap.messages.exceptions.IncorrectSyntaxException;
+import dev.ocean.sigtran.tcap.primitives.tc.*;
+import dev.ocean.sigtran.tcap.primitives.tr.TRNotice;
+import dev.ocean.sigtran.utils.ByteUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.mobicents.protocols.asn.AsnOutputStream;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import org.apache.logging.log4j.*;
-import dev.ocean.sigtran.sccp.address.SCCPAddress;
-import dev.ocean.sigtran.sccp.general.ErrorReason;
-import dev.ocean.sigtran.sccp.general.SCCPProvider;
-import dev.ocean.sigtran.sccp.messages.MessageHandling;
-import dev.ocean.sigtran.tcap.messages.AbortMessageImpl;
-import dev.ocean.sigtran.tcap.messages.BeginMessageImpl;
-import dev.ocean.sigtran.tcap.messages.ContinueMessageImpl;
-import dev.ocean.sigtran.tcap.messages.EndMessageImpl;
-import dev.ocean.sigtran.tcap.messages.MessageFactory;
-import dev.ocean.sigtran.tcap.messages.MessageType;
-import dev.ocean.sigtran.tcap.messages.UnknownMessage;
-import dev.ocean.sigtran.tcap.messages.exceptions.IncorrectSyntaxException;
-import dev.ocean.sigtran.tcap.primitives.tc.PAbortCause;
-import dev.ocean.sigtran.tcap.primitives.tc.TCBegin;
-import dev.ocean.sigtran.tcap.primitives.tc.TCContinue;
-import dev.ocean.sigtran.tcap.primitives.tc.TCEnd;
-import dev.ocean.sigtran.tcap.primitives.tc.TCLCancel;
-import dev.ocean.sigtran.tcap.primitives.tc.TCPAbort;
-import dev.ocean.sigtran.tcap.primitives.tc.TCUAbort;
-import dev.ocean.sigtran.tcap.primitives.tr.TRNotice;
-import dev.ocean.sigtran.utils.ByteUtils;
 import java.util.concurrent.ThreadFactory;
-import org.mobicents.protocols.asn.AsnInputStream;
-import org.mobicents.protocols.asn.AsnOutputStream;
 
 /**
- *
  * @author root
  */
 public class TCAPStack implements TCAPStackMBean {
@@ -52,8 +41,6 @@ public class TCAPStack implements TCAPStackMBean {
     private String mbeanName = "dev.ocean.sigtran.management:type=Management,name=TCAP";
     private TCUser tcUser;
 
-//    protected ISMStorage ismStorage;
-//    protected DialogueStorage dialogueStorage;
     private final ConcurrentHashMap<Long, TCAPDialogue> dialogues = new ConcurrentHashMap<>();
 
     protected final ScheduledExecutorService keepAliveScheduler = Executors.newScheduledThreadPool(5, new ThreadFactory() {
@@ -79,10 +66,9 @@ public class TCAPStack implements TCAPStackMBean {
     private final String stackName;
 
     /**
-     *
-     * @param stackName stack name
-     * @param minTrId start of transaction id
-     * @param maxTrId end of transaction id
+     * @param stackName     stack name
+     * @param minTrId       start of transaction id
+     * @param maxTrId       end of transaction id
      * @param keepAliveTime TCAP dialog keep alive timer in seconds
      * @throws Exception
      */
@@ -146,6 +132,11 @@ public class TCAPStack implements TCAPStackMBean {
     public boolean isStarted() {
         return started;
     }
+
+    public Integer dialoguesCount() {
+        return dialogues.size();
+    }
+
 
     @Override
     public long getKeepAliveTimer() {
@@ -244,8 +235,8 @@ public class TCAPStack implements TCAPStackMBean {
     }
 
     private void processBegin(byte[] userData, SCCPAddress calledParty,
-            SCCPAddress callingParty, AsnInputStream ais, boolean sequenceControl,
-            Integer sequenceNumber, MessageHandling messageHandling) {
+                              SCCPAddress callingParty, AsnInputStream ais, boolean sequenceControl,
+                              Integer sequenceNumber, MessageHandling messageHandling) {
         BeginMessageImpl beginMessage = null;
         int currPos = ais.position();
         try {
@@ -259,7 +250,7 @@ public class TCAPStack implements TCAPStackMBean {
             //Assign local transaction id
             TCAPDialogue tcapTransactionStateMachine
                     = this.createDialogue(false, new QoS(messageHandling,
-                            sequenceControl, sequenceNumber));
+                    sequenceControl, sequenceNumber));
 
             tcapTransactionStateMachine.setRawData(userData);
             tcapTransactionStateMachine.beginReceived(userData, beginMessage,
@@ -279,11 +270,11 @@ public class TCAPStack implements TCAPStackMBean {
                 }
 
                 logger.error(String.format("Incorrect syntax of received BEGIN message:"
-                        + "ClngPty = %s; CldPty = %s; %s; Data = %s", callingParty, calledParty,
+                                + "ClngPty = %s; CldPty = %s; %s; Data = %s", callingParty, calledParty,
                         unknownMessage, ByteUtils.bytes2Hex(userData)), ex);
             } catch (Exception e) {
                 logger.error(String.format("Unexpected error during process BEGIN message:"
-                        + "ClngPty = %s; CldPty = %s; Data = %s", callingParty, calledParty,
+                                + "ClngPty = %s; CldPty = %s; Data = %s", callingParty, calledParty,
                         ByteUtils.bytes2Hex(userData)), e);
             }
 
@@ -296,14 +287,14 @@ public class TCAPStack implements TCAPStackMBean {
                         new QoS(messageHandling, sequenceControl, sequenceNumber));
             }
             logger.error(String.format("ResourceLimitation during handle BEGIN message:"
-                    + "ClngPty = %s; CldPty = %s; %s; Data = %s", callingParty, calledParty,
+                            + "ClngPty = %s; CldPty = %s; %s; Data = %s", callingParty, calledParty,
                     beginMessage, ByteUtils.bytes2Hex(userData)), exception);
         }
     }
 
     private void processContinue(byte[] userData, AsnInputStream ais, SCCPAddress callingParty,
-            SCCPAddress calledParty, boolean sequenceControl, Integer sequenceNumber,
-            MessageHandling messageHandling) {
+                                 SCCPAddress calledParty, boolean sequenceControl, Integer sequenceNumber,
+                                 MessageHandling messageHandling) {
         int currPos = ais.position();
         Long destinationTransactionID = null;
         ContinueMessageImpl continueMessage = null;
@@ -350,18 +341,18 @@ public class TCAPStack implements TCAPStackMBean {
                     }
                 }
                 logger.error(String.format("Incorrect syntax of received CONTINUE message:"
-                        + "ClngPty = %s; CldPty = %s; %s; Data = %s", callingParty, calledParty,
+                                + "ClngPty = %s; CldPty = %s; %s; Data = %s", callingParty, calledParty,
                         unknownMessage, ais.toString()), ex);
             } catch (Exception e) {
                 logger.error(String.format("Unexpected exception during handle CONTINUE message:"
-                        + "ClngPty = %s; CldPty = %s; %s; %s", callingParty, calledParty,
+                                + "ClngPty = %s; CldPty = %s; %s; %s", callingParty, calledParty,
                         continueMessage, ais), e);
             }
         }
     }
 
     private void processEnd(byte[] userData, AsnInputStream ais, SCCPAddress callingParty,
-            SCCPAddress calledParty, boolean sequenceControl, Integer sequenceNumber, MessageHandling messageHandling) {
+                            SCCPAddress calledParty, boolean sequenceControl, Integer sequenceNumber, MessageHandling messageHandling) {
         int currPos = ais.position();
         Long destinationTransactionID = null;
         EndMessageImpl endMessage = null;
@@ -391,18 +382,18 @@ public class TCAPStack implements TCAPStackMBean {
                     }
                 }
                 logger.error(String.format("Incorrect syntax of received END message:"
-                        + "ClngPty = %s; CldPty = %s; %s; Data = %s", callingParty, calledParty,
+                                + "ClngPty = %s; CldPty = %s; %s; Data = %s", callingParty, calledParty,
                         unknownMessage, ais.toString()), ex);
             } catch (Exception e) {
                 logger.error(String.format("Unexpected exception during handle END message:"
-                        + "ClngPty = %s; CldPty = %s; %s; Data = %s", callingParty, calledParty,
+                                + "ClngPty = %s; CldPty = %s; %s; Data = %s", callingParty, calledParty,
                         endMessage, ais.toString()), e);
             }
         }
     }
 
     private void processAbort(byte[] userData, AsnInputStream ais, SCCPAddress callingParty,
-            boolean sequenceControl, Integer sequenceNumber, MessageHandling messageHandling) {
+                              boolean sequenceControl, Integer sequenceNumber, MessageHandling messageHandling) {
         int currPoss = ais.position();
         Long destinationTransactionID = null;
 
@@ -441,8 +432,8 @@ public class TCAPStack implements TCAPStackMBean {
     }
 
     private void processUnknownMessage(byte[] userData, AsnInputStream ais, SCCPAddress callingParty,
-            SCCPAddress calledParty, boolean sequenceControl, Integer sequenceNumber,
-            MessageHandling messageHandling) {
+                                       SCCPAddress calledParty, boolean sequenceControl, Integer sequenceNumber,
+                                       MessageHandling messageHandling) {
         UnknownMessage unknownMessage = MessageFactory.createUnknown(ais);
 
         //OTID derivable?

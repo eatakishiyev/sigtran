@@ -1,2 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<m3ua><nodeType>IPSP_CLIENT</nodeType><m3uaWorkers>4</m3uaWorkers><maxAsCountForRouting>2</maxAsCountForRouting><application-server-processes><application-server-process name="remoteAsp1" aspId="212" bindHost1="localhost" bindPort="2906" remoteHost="localhost" remotePort="2905" streams="5" linkType="SERVER" noDelay="true" soSndBuf="2048" soRcvBuf="2048" autoReconnect="false" aspUpTimeOut="2000" aspDownTimeOut="2500" aspActiveTimeOut="2000" aspInactiveTimeOut="2000" trafficMode="OVERRIDE" workers="2" autoStart="true" /></application-server-processes><application-servers><application-server name="smsc-as" routingContext="200" sendRoutingContext="true" networkAppearance="-1"><application-server-process name="remoteAsp1" /></application-server><application-server name="AS1" routingContext="1" sendRoutingContext="true" networkAppearance="-1" /></application-servers><routes><route name="route-outgoing" opc="87" dpc="36" si="3" mode="LOADSHARE"><application-server name="smsc-as" /></route></routes></m3ua>
+<m3ua>
+    <nodeType>IPSP_CLIENT</nodeType>
+    <m3uaWorkers>4</m3uaWorkers>
+    <maxAsCountForRouting>2</maxAsCountForRouting>
+    <application-server-processes>
+        <application-server-process name="remoteAsp1" aspId="212" bindHost1="localhost" bindPort="2906"
+                                    remoteHost="localhost" remotePort="2905" streams="5" linkType="SERVER"
+                                    noDelay="true" soSndBuf="2048" soRcvBuf="2048" autoReconnect="false"
+                                    aspUpTimeOut="2000" aspDownTimeOut="2500" aspActiveTimeOut="2000"
+                                    aspInactiveTimeOut="2000" trafficMode="OVERRIDE" workers="2" autoStart="true"/>
+    </application-server-processes>
+    <application-servers>
+        <application-server name="smsc-as" routingContext="200" sendRoutingContext="true" networkAppearance="-1">
+            <application-server-process name="remoteAsp1"/>
+        </application-server>
+        <application-server name="AS1" routingContext="1" sendRoutingContext="true" networkAppearance="-1"/>
+    </application-servers>
+    <routes>
+        <route name="route-outgoing" opc="87" dpc="36" si="3" mode="LOADSHARE">
+            <application-server name="smsc-as"/>
+        </route>
+    </routes>
+</m3ua>

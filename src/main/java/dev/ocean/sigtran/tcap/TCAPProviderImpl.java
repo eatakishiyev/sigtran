@@ -23,7 +23,7 @@ public class TCAPProviderImpl implements TCAPProvider {
 //    
     protected TCAPProviderImpl(TCAPStack tcapStack) throws IOException {
         this.tcapStack = tcapStack;
-        tcapStat = new Statistic(tcapStack.getStackName());
+        tcapStat = new Statistic(tcapStack.getStackName(),tcapStack);
         LOGGER.info(String.format("Initializing TCAP Provider. KeepAliveTimer => %d", tcapStack.keepAliveTime));
     }
 
