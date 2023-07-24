@@ -97,6 +97,14 @@ public class CallBarredParam {
         this.extensibleCallBarredParam = extensibleCallBarredParam;
     }
 
+    @Override
+    public String toString() {
+        return "CallBarredParam{" +
+                "callBarringCause=" + callBarringCause +
+                ", extensibleCallBarredParam=" + extensibleCallBarredParam +
+                '}';
+    }
+
     public static class ExtensibleCallBarredParam {
 
         private CallBarringCause callBarringCause;
@@ -236,6 +244,16 @@ public class CallBarredParam {
          */
         public void setAnonymousCallRejection(Boolean anonymousCallRejection) {
             this.anonymousCallRejection = anonymousCallRejection;
+        }
+
+        @Override
+        public String toString() {
+            return "ExtensibleCallBarredParam{" +
+                    "callBarringCause=" + callBarringCause +
+                    ", extensionContainer=" + extensionContainer +
+                    ", unauthorisedMessageOriginator=" + unauthorisedMessageOriginator +
+                    ", anonymousCallRejection=" + anonymousCallRejection +
+                    '}';
         }
     }
 }

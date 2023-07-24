@@ -62,4 +62,10 @@ public class FacilityNotSupported implements MAPUserError {
         this.facilityNotSupportedParam = facilityNotSupportedParam;
     }
 
+    @Override
+    public String toString() {
+        return "FacilityNotSupported{" +
+                "facilityNotSupportedParam=" + facilityNotSupportedParam +
+                '}';
+    }
 }

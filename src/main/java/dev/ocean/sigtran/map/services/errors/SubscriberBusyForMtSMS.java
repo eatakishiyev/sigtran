@@ -64,4 +64,11 @@ public class SubscriberBusyForMtSMS implements MAPUserError {
     public void setSubBusyForMTSMSParam(SubBusyForMTSMSParam subBusyForMTSMSParam) {
         this.subBusyForMTSMSParam = subBusyForMTSMSParam;
     }
+
+    @Override
+    public String toString() {
+        return "SubscriberBusyForMtSMS{" +
+                "subBusyForMTSMSParam=" + subBusyForMTSMSParam +
+                '}';
+    }
 }

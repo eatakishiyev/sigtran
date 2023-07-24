@@ -5,6 +5,8 @@
 package dev.ocean.sigtran.map.services.mobility.sms;
 
 import java.io.IOException;
+import java.util.Arrays;
+
 import dev.ocean.sigtran.map.parameters.ExtensionContainer;
 import dev.ocean.sigtran.map.parameters.IP_SM_GW_Guidance;
 import dev.ocean.sigtran.common.exceptions.IncorrectSyntaxException;
@@ -175,4 +177,15 @@ public class SendRoutingInfoForSMRes implements MAPResponse {
         return responseCorrupted;
     }
 
+    @Override
+    public String toString() {
+        return "SendRoutingInfoForSMRes{" +
+                "imsi=" + imsi +
+                ", locationInfoWithLMSI=" + locationInfoWithLMSI +
+                ", extensionContainer=" + extensionContainer +
+                ", ipSMGWGuidance=" + ipSMGWGuidance +
+                ", responseData=" + Arrays.toString(responseData) +
+                ", responseCorrupted=" + responseCorrupted +
+                '}';
+    }
 }

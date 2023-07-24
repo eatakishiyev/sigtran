@@ -76,4 +76,10 @@ public class IllegalSubscriberParam {
         this.extensionContainer = extensionContainer;
     }
 
+    @Override
+    public String toString() {
+        return "IllegalSubscriberParam{" +
+                "extensionContainer=" + extensionContainer +
+                '}';
+    }
 }

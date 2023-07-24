@@ -7,11 +7,17 @@ package dev.ocean.sigtran.m3ua;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import dev.ocean.sigtran.m3ua.configuration.ApplicationServer;
+import dev.ocean.sigtran.m3ua.configuration.ApplicationServerProcess;
+import dev.ocean.sigtran.m3ua.configuration.M3UAConfiguration;
 import dev.ocean.sigtran.m3ua.parameters.TrafficMode;
 import dev.ocean.sigtran.m3ua.router.Route;
 import dev.ocean.sigtran.m3ua.router.Router;
 import dev.ocean.sigtran.m3ua.router.RouteMode;
+
 import java.io.FileOutputStream;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
@@ -28,9 +34,9 @@ import org.jdom2.output.XMLOutputter;
  */
 public class M3UALayerManagement implements M3UALayerManagementMBean {
 
-//  
+    //
     private final Logger logger = LogManager.getLogger(M3UALayerManagement.class);
-//    
+    //
     private final M3UAStackImpl stack;
 
     protected M3UALayerManagement(M3UAStackImpl stack) {
@@ -39,11 +45,11 @@ public class M3UALayerManagement implements M3UALayerManagementMBean {
 
     @Override
     public void createAsp(String name, String localHost, String additionalAddress,
-            int localPort, String peerHost, int peerPort, int inStreams,
-            int outStreams, boolean autreconnect, boolean noDelay, int soSndBuf,
-            int soRcvBuf, LinkType linkType, int aspUpTimeOut,
-            int aspDownTimeOut, int aspActiveTimeOut, int aspInactiveTimeOut,
-            int workersCount, boolean autoStart, Integer aspIdentifier, TrafficMode trafficMode) throws Exception {
+                          int localPort, String peerHost, int peerPort, int inStreams,
+                          int outStreams, boolean autreconnect, boolean noDelay, int soSndBuf,
+                          int soRcvBuf, LinkType linkType, int aspUpTimeOut,
+                          int aspDownTimeOut, int aspActiveTimeOut, int aspInactiveTimeOut,
+                          int workersCount, boolean autoStart, Integer aspIdentifier, TrafficMode trafficMode) throws Exception {
 
         AspImpl asp = this.getAsp(name);
         if (asp != null) {
@@ -79,7 +85,7 @@ public class M3UALayerManagement implements M3UALayerManagementMBean {
             if (!aspStateMachine.getCurrentState().getName().
                     equals(AspState.ASP_DOWN.name())) {
                 throw new IOException(String.format("[M3UA]: Can not remove RemoteAsp, "
-                        + "some RC[%s] are not in ASP_DOWN state. As = %s",
+                                + "some RC[%s] are not in ASP_DOWN state. As = %s",
                         aspStateMachine.getAs().getRc(), aspStateMachine.as.getName()));
             }
 
@@ -284,50 +290,36 @@ public class M3UALayerManagement implements M3UALayerManagementMBean {
     }
 
     @Override
-    public void loadConfiguration() throws JDOMException, IOException {
+    public void loadConfiguration(M3UAConfiguration m3UAConfiguration) throws JDOMException, IOException {
 
         logger.info("[M3UA]: Loading configuration...");
-        SAXBuilder saxBuilder = new SAXBuilder();
-        Document document = saxBuilder.build(new File(stack.getConfigFile()));
-
-        XPathFactory xpathFactory = XPathFactory.instance();
-
-        XPathExpression expression = xpathFactory.compile("/m3ua/nodeType");
-        stack.nodeType = NodeType.getInstance(((Element) expression.evaluateFirst(document)).getTextNormalize());
-
-        expression = xpathFactory.compile("/m3ua/m3uaWorkers");
-        stack.workersCount = Integer.parseInt(((Element) expression.evaluateFirst(document)).getTextNormalize());
-
-        expression = xpathFactory.compile("/m3ua/maxAsCountForRouting");
-        stack.setMaxAsCountForRouting(Integer.parseInt(((Element) expression.evaluateFirst(document)).getTextNormalize()));
+        stack.nodeType = m3UAConfiguration.getNodeType();
+        stack.workersCount = m3UAConfiguration.getM3uaWorkers();
+        stack.setMaxAsCountForRouting(m3UAConfiguration.getMaxAsCountForRouting());
 
         //Configure Application server processes
         logger.info("[M3UA]: Loading Application Server Processes...");
-        expression
-                = xpathFactory.compile("m3ua/application-server-processes/application-server-process");
-        List<Element> applicationServerProcessElements = expression.evaluate(document);
-        for (Element applicationServerProcessElement : applicationServerProcessElements) {
-            String name = applicationServerProcessElement.getAttributeValue("name");
-            Integer aspIdentifier = applicationServerProcessElement.getAttribute("aspId") != null
-                    ? applicationServerProcessElement.getAttribute("aspId").getIntValue() : null;
-            String bindHost1 = applicationServerProcessElement.getAttributeValue("bindHost1");
-            String bindHost2 = applicationServerProcessElement.getAttributeValue("bindHost2");
-            int bindPort = applicationServerProcessElement.getAttribute("bindPort").getIntValue();
-            String remoteHost = applicationServerProcessElement.getAttributeValue("remoteHost");
-            int remotePort = applicationServerProcessElement.getAttribute("remotePort").getIntValue();
-            int streams = applicationServerProcessElement.getAttribute("streams").getIntValue();
-            LinkType linkType = LinkType.getInstance(applicationServerProcessElement.getAttributeValue("linkType"));
-            boolean noDelay = applicationServerProcessElement.getAttribute("noDelay").getBooleanValue();
-            int soSndBuf = applicationServerProcessElement.getAttribute("soSndBuf").getIntValue();
-            int soRcvBuf = applicationServerProcessElement.getAttribute("soRcvBuf").getIntValue();
-            boolean autoreconnect = applicationServerProcessElement.getAttribute("autoReconnect").getBooleanValue();
-            int aspUpTimeOut = applicationServerProcessElement.getAttribute("aspUpTimeOut").getIntValue();
-            int aspDownTimeOut = applicationServerProcessElement.getAttribute("aspDownTimeOut").getIntValue();
-            int aspActiveTimeOut = applicationServerProcessElement.getAttribute("aspActiveTimeOut").getIntValue();
-            int aspInactiveTimeOut = applicationServerProcessElement.getAttribute("aspInactiveTimeOut").getIntValue();
-            TrafficMode trafficMode = TrafficMode.getInstance(applicationServerProcessElement.getAttributeValue("trafficMode"));
-            int workers = applicationServerProcessElement.getAttribute("workers").getIntValue();
-            boolean autoStart = applicationServerProcessElement.getAttribute("autoStart").getBooleanValue();
+        for (ApplicationServerProcess applicationServerProcess : m3UAConfiguration.getApplicationServerProcesses()) {
+            String name = applicationServerProcess.getName();
+            Integer aspIdentifier = applicationServerProcess.getAspId();
+            String bindHost1 = applicationServerProcess.getBindHost1();
+            String bindHost2 = applicationServerProcess.getBindHost2();
+            int bindPort = applicationServerProcess.getBindPort();
+            String remoteHost = applicationServerProcess.getRemoteHost();
+            int remotePort = applicationServerProcess.getRemotePort();
+            int streams = applicationServerProcess.getStreams();
+            LinkType linkType = applicationServerProcess.getLinkType();
+            boolean noDelay = applicationServerProcess.getNoDelay();
+            int soSndBuf = applicationServerProcess.getSoSndBuf();
+            int soRcvBuf = applicationServerProcess.getSoRcvBuf();
+            boolean autoreconnect = applicationServerProcess.getAutoReconnect();
+            int aspUpTimeOut = applicationServerProcess.getAspUpTimeOut();
+            int aspDownTimeOut = applicationServerProcess.getAspDownTimeOut();
+            int aspActiveTimeOut = applicationServerProcess.getAspActiveTimeOut();
+            int aspInactiveTimeOut = applicationServerProcess.getAspInactiveTimeOut();
+            TrafficMode trafficMode = applicationServerProcess.getTrafficMode();
+            int workers = applicationServerProcess.getWorkers();
+            boolean autoStart = applicationServerProcess.getAutoStart();
 
             try {
                 this.createAsp(name, bindHost1, bindHost2, bindPort, remoteHost,
@@ -335,24 +327,21 @@ public class M3UALayerManagement implements M3UALayerManagementMBean {
                         soSndBuf, soRcvBuf, linkType, aspUpTimeOut, aspDownTimeOut,
                         aspActiveTimeOut, aspInactiveTimeOut, workers, autoStart, aspIdentifier, trafficMode);
             } catch (Exception ex) {
-                logger.error("M3UA:Can not load ApplicationServerProcess. :", ex);
+                logger.error("[M3UA]:Can not load ApplicationServerProcess. :", ex);
             }
         }
 
         //Configure Application servers
-        logger.info("M3UA: Loading Application Servers...");
-        expression = xpathFactory.compile("m3ua/application-servers/application-server");
-        List<Element> applicationServerElements = expression.evaluate(document);
-        for (Element applicationServerElement : applicationServerElements) {
-            String name = applicationServerElement.getAttributeValue("name");
-            int routingContex = applicationServerElement.
-                    getAttribute("routingContext").getIntValue();
-            boolean sendRoutingContext = applicationServerElement.
-                    getAttribute("sendRoutingContext").getBooleanValue();
+        logger.info("[M3UA]: Loading Application Servers...");
+
+        for (ApplicationServer applicationServer : m3UAConfiguration.getApplicationServers()) {
+            String name = applicationServer.getName();
+            int routingContex = applicationServer.getRoutingContext();
+            boolean sendRoutingContext = applicationServer.getSendRoutingContext();
 
             int networkAppearance = -1;
-            if (applicationServerElement.getAttribute("networkAppearance") != null) {
-                networkAppearance = applicationServerElement.getAttribute("networkAppearance").getIntValue();
+            if (applicationServer.getNetworkAppearance() != null) {
+                networkAppearance = applicationServer.getNetworkAppearance();
             }
 
             try {
@@ -361,42 +350,36 @@ public class M3UALayerManagement implements M3UALayerManagementMBean {
                 as.setSendRoutingContext(sendRoutingContext);
                 stack.configuredAsList.add(as);
 
-                expression = xpathFactory.compile("application-server-process");
-                applicationServerProcessElements = expression.evaluate(applicationServerElement);
-                for (Element applicationServerProcessElement : applicationServerProcessElements) {
-                    String aspName = applicationServerProcessElement.getAttributeValue("name");
+                for (String aspName : applicationServer.getApplicationServerProcesses()) {
                     AspImpl aspImpl = this.getAsp(aspName);
                     if (aspImpl == null) {
-                        logger.error("M3UA: Can not find Asp with name " + aspName);
+                        logger.error("[M3UA]: Can not find Asp with name " + aspName);
                     } else {
                         aspImpl.addAs(as);
                         as.addAsp(aspImpl);
                     }
                 }
             } catch (Exception ex) {
-                logger.error("M3UA:Can not load ApplictionServer. :", ex);
+                logger.error("[M3UA]:Can not load ApplictionServer. :", ex);
             }
 
         }
 
         //Configure route
-        logger.info("M3UA: Loading M3UA routes...");
-        expression = xpathFactory.compile("m3ua/routes/route");
-        List<Element> routeElements = expression.evaluate(document);
-        for (Element routeElement : routeElements) {
+        logger.info("[M3UA]: Loading M3UA routes...");
+        for (dev.ocean.sigtran.m3ua.configuration.Route routeConfig : m3UAConfiguration.getRoutes()) {
             try {
-                String name = routeElement.getAttributeValue("name");
-                int opc = routeElement.getAttribute("opc").getIntValue();
-                int dpc = routeElement.getAttribute("dpc").getIntValue();
-                ServiceIdentificator si = ServiceIdentificator.getInstance(routeElement.getAttribute("si").getIntValue());
-                RouteMode routeMode = RouteMode.getInstance(routeElement.getAttributeValue("mode"));
+                String name = routeConfig.getName();
+                int opc = routeConfig.getOpc();
+                int dpc = routeConfig.getDpc();
+                ServiceIdentificator si = routeConfig.getSi();
+                RouteMode routeMode = routeConfig.getMode();
 
                 Route route = stack.router.createRoute(name, opc, dpc, si, routeMode);
 
-                XPathExpression exp = xpathFactory.compile("application-server");
-                List<Element> applicationServers = exp.evaluate(routeElement);
-                for (Element applicationServer : applicationServers) {
-                    AsImpl as = stack.findAs(applicationServer.getAttributeValue("name"));
+
+                for (String asName : routeConfig.getApplicationServers()) {
+                    AsImpl as = stack.findAs(asName);
                     route.addAs(as);
                 }
             } catch (Exception ex) {
@@ -415,113 +398,6 @@ public class M3UALayerManagement implements M3UALayerManagementMBean {
     public String showAs(String name) throws Exception {
         As as = this.getAs(name);
         return as.toString();
-    }
-
-    @Override
-    public void storeConfiguration() throws Exception {
-
-        Document document = new Document();
-
-        Element rootElement = new Element("m3ua");
-
-        Element nodeType = new Element("nodeType");
-        nodeType.setText(stack.getNodeType().value());
-        rootElement.addContent(nodeType);
-
-        Element m3uaWorkers = new Element("m3uaWorkers");
-        m3uaWorkers.setText(String.valueOf(stack.getWorkersCount()));
-        rootElement.addContent(m3uaWorkers);
-
-        Element maxAsCountForRouting = new Element("maxAsCountForRouting");
-        maxAsCountForRouting.setText(String.valueOf(stack.getMaxAsCountForRouting()));
-        rootElement.addContent(maxAsCountForRouting);
-
-        //ApplicationServerProcess storing
-        Element applicationServerProcesses = new Element("application-server-processes");
-        for (AspImpl asp : stack.aspList) {
-            Element applicationServerProcess = new Element("application-server-process");
-
-            applicationServerProcess.setAttribute("name", asp.getName())
-                    .setAttribute("aspId", asp.getAspId() == null ? "-1" : String.valueOf(asp.getAspId()))
-                    .setAttribute("bindHost1", asp.getSctpAssociation().getLocalAddress().getHostName())
-                    .setAttribute("bindPort", String.valueOf(asp.getSctpAssociation().getLocalAddress().getPort()));
-
-            if (asp.getSctpAssociation().getAdditionalAddress() != null) {
-                applicationServerProcess.setAttribute("bindHost2", asp.getSctpAssociation().getAdditionalAddress().getHostName());
-            }
-
-            applicationServerProcess.setAttribute("remoteHost", asp.getSctpAssociation().getRemoteAddress().getHostName())
-                    .setAttribute("remotePort", String.valueOf(asp.getSctpAssociation().getRemoteAddress().getPort()))
-                    .setAttribute("streams", String.valueOf(asp.getSctpAssociation().getInStreams()))
-                    .setAttribute("linkType", asp.getLinkType().getValue())
-                    .setAttribute("noDelay", String.valueOf(asp.isNoDelay()))
-                    .setAttribute("soSndBuf", String.valueOf(asp.getSoSndBuf()))
-                    .setAttribute("soRcvBuf", String.valueOf(asp.getSoRcvBuf()))
-                    .setAttribute("autoReconnect", String.valueOf(asp.getSctpAssociation().isAutoReconnect()))
-                    .setAttribute("aspUpTimeOut", String.valueOf(asp.getAspUpTimeOut()))
-                    .setAttribute("aspDownTimeOut", String.valueOf(asp.getAspDownTimeOut()))
-                    .setAttribute("aspActiveTimeOut", String.valueOf(asp.getAspActiveTimeOut()))
-                    .setAttribute("aspInactiveTimeOut", String.valueOf(asp.getAspInactiveTimeOut()))
-                    .setAttribute("trafficMode", asp.getTrafficMode().name())
-                    .setAttribute("workers", String.valueOf(asp.getWorkersCount()))
-                    .setAttribute("autoStart", String.valueOf(asp.isAutoStart()));
-
-            applicationServerProcesses.addContent(applicationServerProcess);
-        }
-        rootElement.addContent(applicationServerProcesses);
-
-        //ApplicationServer storing
-        Element applicationServers = new Element("application-servers");
-        for (AsImpl as : stack.configuredAsList) {
-            Element applicationServer = new Element("application-server");
-            applicationServer.setAttribute("name", as.getName())
-                    .setAttribute("routingContext", String.valueOf(as.getRc()))
-                    .setAttribute("sendRoutingContext", String.valueOf(as.isSendRoutingContext()))
-                    .setAttribute("networkAppearance", String.valueOf(as.getNetworkAppearance()));
-            for (AspImpl aspImpl : as.getAspList()) {
-                Element configuredApplicationServerProcess = new Element("application-server-process")
-                        .setAttribute("name", aspImpl.getName());
-                applicationServer.addContent(configuredApplicationServerProcess);
-            }
-
-            applicationServers.addContent(applicationServer);
-        }
-        rootElement.addContent(applicationServers);
-
-        //Routes storing
-        Element routes = new Element("routes");
-        for (Route route : stack.router.getRoutes()) {
-            Element routeElement = new Element("route")
-                    .setAttribute("name", route.getName())
-                    .setAttribute("opc", String.valueOf(route.getOpc()))
-                    .setAttribute("dpc", String.valueOf(route.getDpc()))
-                    .setAttribute("si", String.valueOf(route.getSi().value()))
-                    .setAttribute("mode", route.getMode().name());
-            for (AsImpl as : route.getAsList()) {
-                Element configuredApplicationServer = new Element("application-server")
-                        .setAttribute("name", as.getName());
-                routeElement.addContent(configuredApplicationServer);
-            }
-            routes.addContent(routeElement);
-        }
-
-        rootElement.addContent(routes);
-
-        document.setRootElement(rootElement);
-
-        //Rename old file .
-        File file = new File(stack.getConfigFile());
-        file.renameTo(new File(String.format("%s.%s", stack.getConfigFile(),
-                System.currentTimeMillis())));
-
-        try {
-            XMLOutputter xmlo = new XMLOutputter();
-            xmlo.output(document, new FileOutputStream(new File(stack.getConfigFile())));
-        } catch (Throwable th) {
-            file.renameTo(new File(String.format("%s", stack.getConfigFile())));
-            throw th;
-        }
-
     }
 
     @Override

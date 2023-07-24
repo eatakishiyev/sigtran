@@ -6,25 +6,27 @@ package dev.ocean.sigtran.sccp.general;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+
 import dev.ocean.sigtran.m3ua.NetworkIndicator;
 import dev.ocean.sigtran.sccp.access.point.LocalPointCode;
 import dev.ocean.sigtran.sccp.access.point.MTPServiceAccessPoint;
 import dev.ocean.sigtran.sccp.address.NatureOfAddress;
 import dev.ocean.sigtran.sccp.address.RoutingIndicator;
 import dev.ocean.sigtran.sccp.address.SubSystemNumber;
+import dev.ocean.sigtran.sccp.general.configuration.SCCPConfiguration;
 import dev.ocean.sigtran.sccp.gtt.GlobalTitleTranslator;
 import dev.ocean.sigtran.sccp.gtt.SccpEntitySet;
+import dev.ocean.sigtran.sccp.messages.MessageType;
+
 import java.util.List;
 
 /**
- *
  * @author eatakishiyev
  */
 public interface SCCPLayerManagementMBean {
 
-    public void loadConfiguration() throws Exception;
+    public void loadConfiguration(SCCPConfiguration sccpConfiguration) throws Exception;
 
-    public void storeConfiguration() throws Exception;
 
     public void createGlobalTitleTranslationRule(String gtt, String name, String pattern, RoutingIndicator ri, String sccpEntitySet, Integer tt, NatureOfAddress nai, NumberingPlan np, String convetionRule) throws IOException;
 
@@ -36,25 +38,25 @@ public interface SCCPLayerManagementMBean {
 
     public void createGlobalTitleTranslator(String name, Integer translationType, NumberingPlan numberingPlan, NatureOfAddress natureOfAddress) throws IOException;
 
-    public void createMtpServiceAccessPoint(String name, int remotePointCode, int opc, int ni, String targetMessageType) throws IOException;
+    public void createMtpServiceAccessPoint(String name, int dpc, int opc, NetworkIndicator ni, MessageType targetMessageType) throws IOException;
 
     public void createRemoteSignallingPoint(String name, int spc, boolean concerned) throws IOException;
 
-    public void createRemoteSubsystem(String remoteSpcName,SubSystemNumber ssn) throws IOException;
+    public void createRemoteSubsystem(String remoteSpcName, SubSystemNumber ssn) throws IOException;
 
     public void removeRemoteSubsystem(String remoteSpcName, SubSystemNumber ssn) throws IOException;
 
     public void removeRemoteSubsystem(String remoteSpcName, int ssn) throws Exception;
 
-    public SccpEntitySet createSccpEntitySet(String name, SccpEntitySet.Mode mode, 
-            boolean xudtEnabled) throws IOException;
+    public SccpEntitySet createSccpEntitySet(String name, SccpEntitySet.Mode mode,
+                                             boolean xudtEnabled) throws IOException;
 
     public void registerConcernedSp(String remoteSignallingPoint) throws Exception;
 
     public void removeGlobalTitleTranslationRule(String globalTitleTraslator, String rule) throws IOException;
 
     public void setMasterSap(String sap, String entitySet) throws IOException;
-    
+
     public void setSlaveSap(String sap, String entitySet) throws Exception;
 
     public void removeGlobalTitleTranslator(String name) throws IOException;
@@ -70,9 +72,9 @@ public interface SCCPLayerManagementMBean {
     public void stopLocalSubsystem(int ssn) throws RemoteException;
 
     public void removeLocalSubSystem(int ssn) throws Exception;
-    
+
     public boolean isReturnOnlyFirstSegment();
-    
+
     public void setReturnOnlyFirstSegment(boolean returnOnlyFirstSegment);
 
     public LocalPointCode createLocalPointCode(String name, int opc, NetworkIndicator ni) throws IOException;
@@ -92,9 +94,9 @@ public interface SCCPLayerManagementMBean {
     public void setSstTimerIncreaseBy(long sstTimerIncreaseBy);
 
     public long getSstTimerIncreaseBy();
-    
+
     public void setReassemblyTimer(long reassemblyTimer);
-    
+
     public long getReassemblyTimer();
 
     public LocalPointCode getLocalPointCode();
@@ -110,8 +112,8 @@ public interface SCCPLayerManagementMBean {
     public ConcernedSignallingPoints getConcernedSpc();
 
     public void removeConcernedSignallingPoint(String remoteSpcName) throws Exception;
-    
+
     public void setHopCounter(int hopCounter);
-    
+
     public int getHopCounter();
 }

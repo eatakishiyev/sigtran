@@ -96,4 +96,12 @@ public class SystemFailureParam {
     public void setExtensibleSystemFailureParam(ExtensibleSystemFailureParam extensibleSystemFailureParam) {
         this.extensibleSystemFailureParam = extensibleSystemFailureParam;
     }
+
+    @Override
+    public String toString() {
+        return "SystemFailureParam{" +
+                "networkResource=" + networkResource +
+                ", extensibleSystemFailureParam=" + extensibleSystemFailureParam +
+                '}';
+    }
 }

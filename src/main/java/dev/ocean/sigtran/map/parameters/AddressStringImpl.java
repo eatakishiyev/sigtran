@@ -5,9 +5,11 @@
 package dev.ocean.sigtran.map.parameters;
 
 import dev.ocean.gsm.string.utils.bcd.BCDStringUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
 import dev.ocean.sigtran.common.exceptions.IncorrectSyntaxException;
 import dev.ocean.sigtran.common.exceptions.UnexpectedDataException;
 import org.mobicents.protocols.asn.AsnException;
@@ -16,7 +18,6 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 
 /**
- *
  * @author root
  */
 public class AddressStringImpl implements AddressString {
@@ -169,10 +170,11 @@ public class AddressStringImpl implements AddressString {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("AddressString:[")
-                .append("AddressNature = ").append(addressNature)
-                .append(";NumberingPlan = ").append(numberingPlan)
-                .append(";Adress = ").append(address)
-                .append("]").toString();
+        return "AddressStringImpl{" +
+                "addressNature=" + addressNature +
+                ", numberingPlan=" + numberingPlan +
+                ", address='" + address + '\'' +
+                ", isExtension=" + isExtension +
+                '}';
     }
 }

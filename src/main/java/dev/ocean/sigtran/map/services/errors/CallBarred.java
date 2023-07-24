@@ -61,4 +61,11 @@ public class CallBarred implements MAPUserError {
     public void setCallBarredParam(CallBarredParam callBarredParam) {
         this.callBarredParam = callBarredParam;
     }
+
+    @Override
+    public String toString() {
+        return "CallBarred{" +
+                "callBarredParam=" + callBarredParam +
+                '}';
+    }
 }

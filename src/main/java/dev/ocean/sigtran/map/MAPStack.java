@@ -15,11 +15,11 @@ import dev.ocean.sigtran.tcap.TCUser;
  */
 public interface MAPStack extends TCUser{
 
-    public void addMapUser(MAPApplicationContextName acName, MAPListener mapUser);
+     void addMapUser(MAPListener mapUser);
     
-    public MAPProvider getMAPProvider();
+     MAPProvider getMAPProvider();
     
-    public TCAPProvider getTcapProvider();
+     TCAPProvider getTcapProvider();
     
-    public MAPDialogueFactory getMAPDialogueFactory();
+     MAPDialogueFactory getMAPDialogueFactory();
 }

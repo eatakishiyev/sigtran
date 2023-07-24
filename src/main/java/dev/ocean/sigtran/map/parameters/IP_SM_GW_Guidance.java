@@ -127,4 +127,13 @@ public class IP_SM_GW_Guidance  implements MAPParameter{
     public void setExtensionContainer(ExtensionContainer extensionContainer) {
         this.extensionContainer = extensionContainer;
     }
+
+    @Override
+    public String toString() {
+        return "IP_SM_GW_Guidance{" +
+                "minimumDeliveryTimeValue=" + minimumDeliveryTimeValue +
+                ", recommendedDeliveryTimeValue=" + recommendedDeliveryTimeValue +
+                ", extensionContainer=" + extensionContainer +
+                '}';
+    }
 }

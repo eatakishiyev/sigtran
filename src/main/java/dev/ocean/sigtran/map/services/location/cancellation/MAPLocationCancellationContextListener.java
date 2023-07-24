@@ -6,18 +6,27 @@
 package dev.ocean.sigtran.map.services.location.cancellation;
 
 import dev.ocean.sigtran.map.MAPListener;
+import dev.ocean.sigtran.map.MAPProvider;
 import dev.ocean.sigtran.map.MAPUserError;
 import dev.ocean.sigtran.map.ProviderError;
+import dev.ocean.sigtran.map.parameters.MAPApplicationContextName;
 
 /**
- *
  * @author eatakishiyev
  */
-public interface MAPLocationCancellationContextListener extends MAPListener {
+public abstract class MAPLocationCancellationContextListener extends MAPListener {
 
-    public void onMAPCancelLocationIndication(Short invokeID, CancelLocationArg cancelLocationArg,
-            MAPLocationCancellationDialogue mapDialogue);
 
-    public void onMAPCancelLocationConfirmation(Short invokeId, CancelLocationRes cancelLocationRes,
-            MAPLocationCancellationDialogue mapDialogue, MAPUserError userError, ProviderError providerError);
+
+    @Override
+    public MAPApplicationContextName[] getMAPApplicationContexts() {
+        return new MAPApplicationContextName[]{MAPApplicationContextName.LOCATION_CANCELLATION_CONTEXT};
+    }
+
+    public  void onMAPCancelLocationIndication(Short invokeID, CancelLocationArg cancelLocationArg,
+                                                       MAPLocationCancellationDialogue mapDialogue){}
+
+    public  void onMAPCancelLocationConfirmation(Short invokeId, CancelLocationRes cancelLocationRes,
+                                                         MAPLocationCancellationDialogue mapDialogue,
+                                                 MAPUserError userError, ProviderError providerError){}
 }

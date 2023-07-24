@@ -66,4 +66,11 @@ public class AbsentSubscriber implements MAPUserError {
     public void setAbsentSubscriberParam(AbsentSubscriberParam absentSubscriberParam) {
         this.absentSubscriberParam = absentSubscriberParam;
     }
+
+    @Override
+    public String toString() {
+        return "AbsentSubscriber{" +
+                "absentSubscriberParam=" + absentSubscriberParam +
+                '}';
+    }
 }

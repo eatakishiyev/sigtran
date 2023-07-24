@@ -103,7 +103,7 @@ public class MAPEricssonMobilityMngtINTriggeringDialogue extends MAPDialogue {
             ExecutorService worker = stack.findWorker(this.getDialogueId());
             worker.submit(() -> {
                 ((MAPEricssonMobilityMngtINTriggeringContextListener) getMAPUser())
-                        .onMAPEricssonMobilityMngtINTriggeringIndication(invoke.getInvokeID(),
+                        .onMAPEricssonMobilityManagementINTriggeringIndication(invoke.getInvokeID(),
                                 mobilityMngtINTriggeringArg, this);
             });
         }
@@ -115,7 +115,7 @@ public class MAPEricssonMobilityMngtINTriggeringDialogue extends MAPDialogue {
             ExecutorService worker = stack.findWorker(this.getDialogueId());
             worker.submit(() -> {
                 ((MAPEricssonMobilityMngtINTriggeringContextListener) getMAPUser())
-                        .onMAPEricssonMobilityMngtINTriggeringConfirmation(indication.getInvokeId(),
+                        .onMAPEricssonMobilityManagementINTriggeringConfirmation(indication.getInvokeId(),
                                 this, null, null);
             });
         }
@@ -127,7 +127,7 @@ public class MAPEricssonMobilityMngtINTriggeringDialogue extends MAPDialogue {
             ExecutorService worker = stack.findWorker(this.getDialogueId());
             worker.submit(() -> {
                 ((MAPEricssonMobilityMngtINTriggeringContextListener) getMAPUser())
-                        .onMAPEricssonMobilityMngtINTriggeringConfirmation(invokeId, this,
+                        .onMAPEricssonMobilityManagementINTriggeringConfirmation(invokeId, this,
                                 mapUserError, null);
             });
         }
@@ -139,7 +139,7 @@ public class MAPEricssonMobilityMngtINTriggeringDialogue extends MAPDialogue {
             ExecutorService worker = stack.findWorker(this.getDialogueId());
             worker.submit(() -> {
                 ((MAPEricssonMobilityMngtINTriggeringContextListener) getMAPUser())
-                        .onMAPEricssonMobilityMngtINTriggeringConfirmation(invokeId, this,
+                        .onMAPEricssonMobilityManagementINTriggeringConfirmation(invokeId, this,
                                 null, providerError);
             });
         }

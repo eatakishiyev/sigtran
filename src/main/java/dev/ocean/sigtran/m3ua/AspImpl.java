@@ -4,9 +4,9 @@
  */
 package dev.ocean.sigtran.m3ua;
 
-import dev.ocean.performance.counter.PerfCounter;
-import dev.ocean.performance.counter.PerfCounterTps;
-import dev.ocean.performance.counter.PerfStorage;
+import com.linkedlogics.performance.counter.PerfCounter;
+import com.linkedlogics.performance.counter.PerfCounterTps;
+import com.linkedlogics.performance.counter.PerfStorage;
 import dev.ocean.sctp.ClientAssociation;
 import dev.ocean.sctp.SctpAssociation;
 import dev.ocean.sctp.SctpListener;
@@ -54,13 +54,6 @@ public final class AspImpl extends Asp implements SctpListener {
 
     private transient final static Logger LOGGER = LogManager.getLogger(AspImpl.class);
 
-//    private String localHost;
-//    private String additionalAddress;
-//    private Integer localPort;
-//    private String peerHost;
-//    private Integer peerPort;
-//
-//    private boolean autoReconnect = true;
     private SctpAssociation sctpAssociation;
 
     private Boolean noDelay = true;

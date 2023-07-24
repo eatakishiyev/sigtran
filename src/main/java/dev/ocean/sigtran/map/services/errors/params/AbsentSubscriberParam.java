@@ -88,4 +88,12 @@ public class AbsentSubscriberParam {
         this.extensionContainer = extensionContainer;
     }
 
+
+    @Override
+    public String toString() {
+        return "AbsentSubscriberParam{" +
+                "extensionContainer=" + extensionContainer +
+                ", absentSubscriberReason=" + absentSubscriberReason +
+                '}';
+    }
 }

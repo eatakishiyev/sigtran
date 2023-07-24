@@ -140,4 +140,13 @@ public class SMDeliveryFailureCause {
     public void setExtensionContainer(ExtensionContainer extensionContainer) {
         this.extensionContainer = extensionContainer;
     }
+
+    @Override
+    public String toString() {
+        return "SMDeliveryFailureCause{" +
+                "sMEnumeratedDeliveryFailureCause=" + sMEnumeratedDeliveryFailureCause +
+                ", diagnosticInfo=" + diagnosticInfo +
+                ", extensionContainer=" + extensionContainer +
+                '}';
+    }
 }

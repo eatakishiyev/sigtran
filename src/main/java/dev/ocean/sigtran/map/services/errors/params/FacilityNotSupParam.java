@@ -126,4 +126,13 @@ public class FacilityNotSupParam {
     public void setNeededLcsCapabilityNotSupportedInServingNode(Boolean neededLcsCapabilityNotSupportedInServingNode) {
         this.neededLcsCapabilityNotSupportedInServingNode = neededLcsCapabilityNotSupportedInServingNode;
     }
+
+    @Override
+    public String toString() {
+        return "FacilityNotSupParam{" +
+                "extensionContainer=" + extensionContainer +
+                ", shapeOfLocationEstimateNotSupported=" + shapeOfLocationEstimateNotSupported +
+                ", neededLcsCapabilityNotSupportedInServingNode=" + neededLcsCapabilityNotSupportedInServingNode +
+                '}';
+    }
 }

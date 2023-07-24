@@ -319,9 +319,11 @@ public class MAPStackImpl implements MAPStack {
         return users;
     }
 
-    public void addMapUser(MAPApplicationContextName acName, MAPListener mapUser) {
-        users.put(acName, mapUser);
-        mapUser.setMAPProvider(mapProvider);
+    public void addMapUser(MAPListener mapUser) {
+        for (MAPApplicationContextName mapApplicationContextName : mapUser.getMAPApplicationContexts()) {
+            users.put(mapApplicationContextName, mapUser);
+        }
+        mapUser.setMapProvider(mapProvider);
     }
 
 }

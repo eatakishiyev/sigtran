@@ -4,17 +4,19 @@
  */
 package dev.ocean.sigtran.sccp.general;
 
-import dev.ocean.performance.counter.PerfCounter;
-import dev.ocean.performance.counter.PerfStorage;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
+import com.linkedlogics.performance.counter.PerfCounter;
+import com.linkedlogics.performance.counter.PerfStorage;
 import dev.ocean.sigtran.m3ua.M3UAProvider;
 import dev.ocean.sigtran.m3ua.MTPTransferMessage;
 import dev.ocean.sigtran.m3ua.ServiceIdentificator;
+import dev.ocean.sigtran.sccp.general.configuration.SCCPConfiguration;
 import org.apache.logging.log4j.*;
 import dev.ocean.sigtran.m3ua.parameters.Cause;
 import dev.ocean.sigtran.sccp.address.SubSystemNumber;
@@ -96,16 +98,6 @@ public class SCCPStackImpl implements SCCPStack {
 
     private boolean returnOnlyFirstSegment = false;
 
-    public static SCCPStackImpl createInstance(M3UAProvider m3UAProvider) throws Exception {
-        if (instance == null) {
-            synchronized (SCCPStackImpl.class) {
-                if (instance == null) {
-                    instance = new SCCPStackImpl(m3UAProvider);
-                }
-            }
-        }
-        return instance;
-    }
 
     public static SCCPStackImpl getInstance() {
         return instance;
@@ -116,7 +108,7 @@ public class SCCPStackImpl implements SCCPStack {
     private int hopCounter;
     private long reassemblyTimer;
 
-    private SCCPStackImpl(M3UAProvider m3UAProvider) throws Exception {
+    public SCCPStackImpl(SCCPConfiguration sccpConfiguration, M3UAProvider m3UAProvider) throws Exception {
         logger.info("==========================| Starting SCCP Stack |==========================");
         this.m3UAProvider = m3UAProvider;
         this.m3UAProvider.addUser(this);
@@ -186,7 +178,7 @@ public class SCCPStackImpl implements SCCPStack {
 
             logger.info("[SCCP]: Starting SCCP Layer Management...");
             this.sccpLayerManagement = new SCCPLayerManagement(this);
-            this.sccpLayerManagement.loadConfiguration();
+            this.sccpLayerManagement.loadConfiguration(sccpConfiguration);
 
             logger.info("[SCCP]: Starting SCCP Routing Control... ");
             this.sccpRoutingControl = new SCCPRoutingControlImpl(this);

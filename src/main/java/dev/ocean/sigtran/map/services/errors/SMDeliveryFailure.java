@@ -59,4 +59,11 @@ public class SMDeliveryFailure implements MAPUserError {
     public void setsMDeliveryFailureCause(SMDeliveryFailureCause sMDeliveryFailureCause) {
         this.sMDeliveryFailureCause = sMDeliveryFailureCause;
     }
+
+    @Override
+    public String toString() {
+        return "SMDeliveryFailure{" +
+                "sMDeliveryFailureCause=" + sMDeliveryFailureCause +
+                '}';
+    }
 }

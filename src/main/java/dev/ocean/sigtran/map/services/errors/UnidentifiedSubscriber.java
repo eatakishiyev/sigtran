@@ -67,4 +67,10 @@ public class UnidentifiedSubscriber implements MAPUserError {
         this.unidentifiedSubParam = unidentifiedSubParam;
     }
 
+    @Override
+    public String toString() {
+        return "UnidentifiedSubscriber{" +
+                "unidentifiedSubParam=" + unidentifiedSubParam +
+                '}';
+    }
 }

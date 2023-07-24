@@ -77,45 +77,45 @@ public class Statistic {
                 sb.append("ConcurrentDialogueCount = ").
                         append(tcapStack.dialoguesCount()).append("\n");
                 sb.append("ReceivedBeginCount = ").
-                        append(receivedBeginCount.getAcquire()).append("\n");
+                        append(receivedBeginCount.getAndAdd(0)).append("\n");
                 sb.append("ReceivedContinueCount = ").
-                        append(receivedContinueCount.getAcquire()).append("\n");
+                        append(receivedContinueCount.getAndAdd(0)).append("\n");
                 sb.append("ReceivedEndCount = ").
-                        append(receivedEndCount.getAcquire()).append("\n");
+                        append(receivedEndCount.getAndAdd(0)).append("\n");
                 sb.append("ReceivedAbortCount = ").
-                        append(receivedAbortCount.getAcquire()).append("\n");
+                        append(receivedAbortCount.getAndAdd(0)).append("\n");
                 sb.append("ReceivedUnparsableMessage = ").
-                        append(receivedUnparsableMessage.getAcquire()).append("\n");
+                        append(receivedUnparsableMessage.getAndAdd(0)).append("\n");
                 sb.append("ReceivedUnknownMessage = ").
-                        append(receivedUnknownMessage.getAcquire()).append("\n");
+                        append(receivedUnknownMessage.getAndAdd(0)).append("\n");
                 sb.append("ReceivedNoticeCount = ").
-                        append(receivedNoticeCount.getAcquire()).append("\n");
+                        append(receivedNoticeCount.getAndAdd(0)).append("\n");
                 sb.append("SentBeginCount = ").
-                        append(sentBeginCount.getAcquire()).append("\n");
+                        append(sentBeginCount.getAndAdd(0)).append("\n");
                 sb.append("SentContinueCount = ").
-                        append(sentContinueCount.getAcquire()).append("\n");
+                        append(sentContinueCount.getAndAdd(0)).append("\n");
                 sb.append("SentEndCount = ").
-                        append(sentEndCount.getAcquire()).append("\n");
+                        append(sentEndCount.getAndAdd(0)).append("\n");
                 sb.append("SentAbortCount = ").
-                        append(sentAbortCount.getAcquire()).append("\n");
+                        append(sentAbortCount.getAndAdd(0)).append("\n");
                 sb.append("SentNoticeCount = ").
-                        append(sentNoticeCount.getAcquire()).append("\n");
+                        append(sentNoticeCount.getAndAdd(0)).append("\n");
                 sb.append("ReceivedInvokeCount = ").
-                        append(receivedInvokeCount.getAcquire()).append("\n");
+                        append(receivedInvokeCount.getAndAdd(0)).append("\n");
                 sb.append("ReceivedReturnResulNotLastCount = ").
-                        append(receivedReturnResultNotLastCount.getAcquire()).append("\n");
+                        append(receivedReturnResultNotLastCount.getAndAdd(0)).append("\n");
                 sb.append("ReceivedReturnResultLastCount = ").
-                        append(receivedReturnResultLastCount.getAcquire()).append("\n");
+                        append(receivedReturnResultLastCount.getAndAdd(0)).append("\n");
                 sb.append("ReceivedReturnErrorCode = ").
-                        append(receivedReturnErrorCount.getAcquire()).append("\n");
+                        append(receivedReturnErrorCount.getAndAdd(0)).append("\n");
                 sb.append("ReceivedRejectCount = ").
-                        append(receivedRejectCount.getAcquire()).append("\n");
+                        append(receivedRejectCount.getAndAdd(0)).append("\n");
                 sb.append("ReceivedMalformedOperationCount = ").
                         append(receivedMalformedOperationCount.get()).append("\n");
                 sb.append("TimeOutedDialogues = ").
-                        append(timeoutedDialogueCount.getAcquire()).append("\n");
+                        append(timeoutedDialogueCount.getAndAdd(0)).append("\n");
                 sb.append("CreatedDialogues = ").
-                        append(createdDialogueCount.getAcquire()).append("\n");
+                        append(createdDialogueCount.getAndAdd(0)).append("\n");
                 statFile.clear();
                 sb.append("TimeOutedOperations = ").
                         append(timeoutedOperationCount.get()).append("\n");

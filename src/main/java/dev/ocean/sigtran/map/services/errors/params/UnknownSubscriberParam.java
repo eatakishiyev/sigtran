@@ -104,4 +104,12 @@ public class UnknownSubscriberParam {
     public void setUnknownSubscriberDiagnostic(UnknownSubscriberDiagnostic unknownSubscriberDiagnostic) {
         this.unknownSubscriberDiagnostic = unknownSubscriberDiagnostic;
     }
+
+    @Override
+    public String toString() {
+        return "UnknownSubscriberParam{" +
+                "extensionContainer=" + extensionContainer +
+                ", unknownSubscriberDiagnostic=" + unknownSubscriberDiagnostic +
+                '}';
+    }
 }

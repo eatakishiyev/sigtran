@@ -116,4 +116,11 @@ public class SubBusyForMTSMSParam {
         this.gprsConnectionSuspended = gprsConnectionSuspended;
     }
 
+    @Override
+    public String toString() {
+        return "SubBusyForMTSMSParam{" +
+                "extensionContainer=" + extensionContainer +
+                ", gprsConnectionSuspended=" + gprsConnectionSuspended +
+                '}';
+    }
 }

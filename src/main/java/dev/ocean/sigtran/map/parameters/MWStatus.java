@@ -5,22 +5,27 @@
 package dev.ocean.sigtran.map.parameters;
 
 import java.io.IOException;
+
 import dev.ocean.sigtran.common.exceptions.IncorrectSyntaxException;
+import lombok.Data;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.BitSetStrictLength;
 
 /**
- *
  * @author eatakishiyev
  */
+@Data
 public class MWStatus {
 
     private boolean scAddressNotIncluded;
     private boolean mnrfSet;
     private boolean mcefSet;
     private boolean mnrgSet;
+
+    private boolean mnr5gSet;
+    private boolean mnr5gn3gSet;
 
     @Override
     public String toString() {
@@ -30,17 +35,22 @@ public class MWStatus {
                 .append(";MNRFSet = ").append(mnrfSet)
                 .append(";MCEFSet = ").append(mcefSet)
                 .append(";MNRGSet = ").append(mnrgSet)
+                .append(";MNR5GSet = ").append(mnr5gSet)
+                .append(";MNR5GN3GSet = ").append(mnr5gn3gSet)
                 .append("]").toString();
     }
 
     public MWStatus() {
     }
 
-    public MWStatus(boolean scAddressIncluded, boolean mnrfSet, boolean mcefSet, boolean mnrgSet) {
+    public MWStatus(boolean scAddressIncluded, boolean mnrfSet, boolean mcefSet, boolean mnrgSet, boolean mnr5gSet,
+                    boolean mnr5gn3gSet) {
         this.scAddressNotIncluded = scAddressIncluded;
         this.mnrfSet = mnrfSet;
         this.mcefSet = mcefSet;
         this.mnrgSet = mnrgSet;
+        this.mnr5gSet = mnr5gSet;
+        this.mnr5gn3gSet = mnr5gn3gSet;
     }
 
     public void encode(int tagClass, int tag, AsnOutputStream aos) throws IncorrectSyntaxException {
@@ -57,6 +67,12 @@ public class MWStatus {
         if (mnrgSet) {
             bitSet.set(3);
         }
+        if (mnr5gSet) {
+            bitSet.set(4);
+        }
+        if (mnr5gn3gSet) {
+            bitSet.set(5);
+        }
         try {
             aos.writeBitString(tagClass, tag, bitSet);
         } catch (AsnException | IOException ex) {
@@ -71,6 +87,8 @@ public class MWStatus {
             this.mnrfSet = bitSetStrictLength.get(1);
             this.mcefSet = bitSetStrictLength.get(2);
             this.mnrgSet = bitSetStrictLength.get(3);
+            this.mnr5gSet = bitSetStrictLength.get(4);
+            this.mnr5gn3gSet = bitSetStrictLength.get(5);
         } catch (AsnException | IOException ex) {
             throw new IncorrectSyntaxException(ex.getMessage());
         }

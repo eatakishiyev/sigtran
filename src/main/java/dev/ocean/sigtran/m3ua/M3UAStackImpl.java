@@ -5,6 +5,7 @@
 package dev.ocean.sigtran.m3ua;
 
 import dev.ocean.sctp.SctpProvider;
+import dev.ocean.sigtran.m3ua.configuration.M3UAConfiguration;
 import dev.ocean.sigtran.m3ua.parameters.Cause;
 import dev.ocean.sigtran.m3ua.router.Router;
 import org.apache.logging.log4j.LogManager;
@@ -31,8 +32,6 @@ public class M3UAStackImpl implements M3UAStack {
 
     private M3UALayerManagement m3uaManagement;
 
-    private String configFile = "./conf/m3ua.xml";
-
     private final Map<ServiceIdentificator, M3UAUser> users = new HashMap<>();
 
     protected final List<AsImpl> configuredAsList = new ArrayList<>();
@@ -54,18 +53,8 @@ public class M3UAStackImpl implements M3UAStack {
     protected int asSelectMask = 0x80; //1000 0000
     protected int aspSelectMask = 0x7F;//0111 1111
 
-    public static M3UAStackImpl getInstance() throws Exception {
-        if (instance == null) {
-            synchronized (M3UAStackImpl.class) {
-                if (instance == null) {
-                    instance = new M3UAStackImpl();
-                }
-            }
-        }
-        return instance;
-    }
 
-    private M3UAStackImpl() throws IOException, MalformedObjectNameException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
+    public M3UAStackImpl(M3UAConfiguration configuration) throws IOException, MalformedObjectNameException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
         logger.info("==========================| Starting M3UA Stack |==========================");
         this.m3uaProvider = new M3UAProviderImpl(this);
         logger.info("[M3UA]:Starting M3UALayerManagement...");
@@ -75,7 +64,7 @@ public class M3UAStackImpl implements M3UAStack {
             logger.info("[M3UA]:Starting SCTP Layer...");
             sctpProvider = SctpProvider.getInstance();
 
-            this.m3uaManagement.loadConfiguration();
+            this.m3uaManagement.loadConfiguration(configuration);
         } catch (Throwable ex) {
             logger.error("Error occured while registering M3UA mbean: ", ex);
         }
@@ -144,17 +133,6 @@ public class M3UAStackImpl implements M3UAStack {
      */
     public M3UALayerManagement getM3uaManagement() {
         return m3uaManagement;
-    }
-
-    /**
-     * @return the configPath
-     */
-    public String getConfigFile() {
-        return configFile;
-    }
-
-    public void setConfigFile(String configFile) {
-        this.configFile = configFile;
     }
 
     /**

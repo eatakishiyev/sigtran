@@ -38,4 +38,5 @@ public class ISDNAddressString extends AddressStringImpl {
     public int getMinLength() {
         return 1;//To change body of generated methods, choose Tools | Templates.
     }
+
 }

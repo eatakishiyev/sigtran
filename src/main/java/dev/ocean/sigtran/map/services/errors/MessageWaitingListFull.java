@@ -56,4 +56,10 @@ public class MessageWaitingListFull implements MAPUserError {
         return messageWaitListFullParam;
     }
 
+    @Override
+    public String toString() {
+        return "MessageWaitingListFull{" +
+                "messageWaitListFullParam=" + messageWaitListFullParam +
+                '}';
+    }
 }

@@ -150,4 +150,12 @@ public class AbsentSubscriberSmParam {
         this.additionalAbsentSubscriberDiagnosticSM = additionalAbsentSubscriberDiagnosticSM;
     }
 
+    @Override
+    public String toString() {
+        return "AbsentSubscriberSmParam{" +
+                "absentSubscriberDiagnosticSM=" + absentSubscriberDiagnosticSM +
+                ", extensionContainer=" + extensionContainer +
+                ", additionalAbsentSubscriberDiagnosticSM=" + additionalAbsentSubscriberDiagnosticSM +
+                '}';
+    }
 }

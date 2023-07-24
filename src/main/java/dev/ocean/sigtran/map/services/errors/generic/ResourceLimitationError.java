@@ -63,4 +63,11 @@ public class ResourceLimitationError implements MAPUserError {
     public MAPUserErrorValues getMAPUserErrorValue() {
         return MAPUserErrorValues.RESOURCE_LIMITATION;
     }
+
+    @Override
+    public String toString() {
+        return "ResourceLimitationError{" +
+                "extensionContainer=" + extensionContainer +
+                '}';
+    }
 }

@@ -57,4 +57,11 @@ public class SystemFailureError implements MAPUserError {
     public void setSystemFailureParam(SystemFailureParam systemFailureParam) {
         this.systemFailureParam = systemFailureParam;
     }
+
+    @Override
+    public String toString() {
+        return "SystemFailureError{" +
+                "systemFailureParam=" + systemFailureParam +
+                '}';
+    }
 }

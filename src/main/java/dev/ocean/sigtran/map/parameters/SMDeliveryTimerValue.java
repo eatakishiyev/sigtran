@@ -62,4 +62,11 @@ public class SMDeliveryTimerValue implements Serializable {
     public void setDeliveryTimer(int deliveryTimer) {
         this.deliveryTimer = deliveryTimer;
     }
+
+    @Override
+    public String toString() {
+        return "SMDeliveryTimerValue{" +
+                "deliveryTimer=" + deliveryTimer +
+                '}';
+    }
 }

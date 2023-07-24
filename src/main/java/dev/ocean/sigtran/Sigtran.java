@@ -6,16 +6,25 @@
 package dev.ocean.sigtran;
 
 import dev.ocean.sigtran.cap.CAPStackImpl;
+import dev.ocean.sigtran.m3ua.M3UAStack;
 import dev.ocean.sigtran.m3ua.M3UAStackImpl;
+import dev.ocean.sigtran.m3ua.configuration.M3UAConfiguration;
 import dev.ocean.sigtran.map.MAPStackImpl;
 import dev.ocean.sigtran.sccp.address.SubSystemNumber;
 import dev.ocean.sigtran.sccp.general.SCCPStack;
 import dev.ocean.sigtran.sccp.general.SCCPStackImpl;
 import dev.ocean.sigtran.sccp.general.SCCPUser;
+import dev.ocean.sigtran.sccp.general.configuration.SCCPConfiguration;
 import dev.ocean.sigtran.tcap.TCAPStack;
 import dev.ocean.sigtran.tcap.TCUser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import java.io.IOException;
 
 /**
  * @author eatakishiyev
@@ -24,30 +33,26 @@ public class Sigtran {
 
     private static Logger logger = LogManager.getLogger(Sigtran.class);
 
-    private static Sigtran instance;
-    private final M3UAStackImpl m3uaStack;
-    private final SCCPStack sccpStack;
+    private M3UAStackImpl m3uaStack;
+    private SCCPStack sccpStack;
 
     //Singleton constructor
-    private Sigtran() throws Exception {
-        logger.info("Starting Sigtran stack...");
-        this.m3uaStack = M3UAStackImpl.getInstance();
-        this.sccpStack = SCCPStackImpl.createInstance(m3uaStack.getM3uaProvider());
+    public Sigtran() throws Exception {
+
     }
 
-    public static Sigtran getInstance() {
-        if (instance == null) {
-            synchronized (Sigtran.class) {
-                try {
-                    instance = new Sigtran();
-                } catch (Exception ex) {
-                    logger.error("Error occured while to get Sigtran instance: ", ex);
-                    ex.printStackTrace();
-                }
-            }
-        }
-        return instance;
+    public M3UAStack createM3UAStack(M3UAConfiguration m3UAConfiguration) throws MalformedObjectNameException, NotCompliantMBeanException, InstanceAlreadyExistsException, IOException, MBeanRegistrationException {
+        logger.info("Starting Sigtran stack...");
+        this.m3uaStack = new M3UAStackImpl(m3UAConfiguration);
+        return m3uaStack;
     }
+
+
+    public SCCPStack createSCCPStack(SCCPConfiguration sccpConfiguration) throws Exception {
+        this.sccpStack = new SCCPStackImpl(sccpConfiguration, m3uaStack.getM3uaProvider());
+        return sccpStack;
+    }
+
 
     public MAPStackImpl createMAPStack(String stackName, long startTransactionId, long endTransactionId,
                                        long keepAliveTimer, SubSystemNumber ssn, int mapGuardTimer, int mapWorkersCount) throws Exception {
@@ -112,5 +117,4 @@ public class Sigtran {
     public M3UAStackImpl getM3uaStack() {
         return m3uaStack;
     }
-
 }

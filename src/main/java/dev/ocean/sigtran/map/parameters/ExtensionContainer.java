@@ -5,11 +5,15 @@
 package dev.ocean.sigtran.map.parameters;
 
 import java.io.IOException;
+import java.util.Arrays;
+
 import dev.ocean.sigtran.common.exceptions.IncorrectSyntaxException;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * ExtensionContainer::= SEQUENCE {
@@ -66,5 +70,12 @@ public class ExtensionContainer implements MAPParameter {
      */
     public void setData(byte[] data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "ExtensionContainer{" +
+                "data=" + DatatypeConverter.printHexBinary(data) +
+                '}';
     }
 }

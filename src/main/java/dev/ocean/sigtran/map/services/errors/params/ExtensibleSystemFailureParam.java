@@ -162,4 +162,13 @@ public class ExtensibleSystemFailureParam {
         this.failureCause = failureCause;
     }
 
+    @Override
+    public String toString() {
+        return "ExtensibleSystemFailureParam{" +
+                "networkResource=" + networkResource +
+                ", extensionContainer=" + extensionContainer +
+                ", additionalNetworkResource=" + additionalNetworkResource +
+                ", failureCause=" + failureCause +
+                '}';
+    }
 }

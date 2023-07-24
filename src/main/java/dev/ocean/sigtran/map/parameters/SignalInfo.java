@@ -5,6 +5,7 @@
 package dev.ocean.sigtran.map.parameters;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import dev.ocean.sigtran.common.exceptions.IncorrectSyntaxException;
 import dev.ocean.sigtran.utils.ByteUtils;
@@ -13,8 +14,11 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 
+import javax.xml.bind.DatatypeConverter;
+
 /**
  * SignalInfo ::= OCTET STRING (SIZE (1..maxSignalInfoLength))
+ *
  * @author eatakishiyev
  */
 public class SignalInfo {
@@ -68,6 +72,8 @@ public class SignalInfo {
 
     @Override
     public String toString() {
-        return String.format("SignalInfo=[%s]", ByteUtils.bytes2Hex(data));
+        return "SignalInfo{" +
+                "data=" + DatatypeConverter.printHexBinary(data) +
+                '}';
     }
 }

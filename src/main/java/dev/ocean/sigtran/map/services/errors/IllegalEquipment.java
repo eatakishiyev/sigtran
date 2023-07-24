@@ -59,4 +59,11 @@ public class IllegalEquipment implements MAPUserError {
     public void setIllegalEquipmentParam(IllegalEquipmentParam illegalEquipmentParam) {
         this.illegalEquipmentParam = illegalEquipmentParam;
     }
+
+    @Override
+    public String toString() {
+        return "IllegalEquipment{" +
+                "illegalEquipmentParam=" + illegalEquipmentParam +
+                '}';
+    }
 }

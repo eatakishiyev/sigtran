@@ -159,18 +159,18 @@ public class TCAPDialogue implements Runnable {
                     //as user data in the TR-BEGIN primitive
                     this.ac = dialogueRequest.getApplicationContext();
 
-                    TCBegin beginIndciation = new TCBegin(this);
+                    TCBegin beginIndication = new TCBegin(this);
 
-                    beginIndciation.setApplicationContext(dialogueRequest.getApplicationContext());
-                    beginIndciation.setUserInformation(dialogueAPDU.getUserInformation());
+                    beginIndication.setApplicationContext(dialogueRequest.getApplicationContext());
+                    beginIndication.setUserInformation(dialogueAPDU.getUserInformation());
                     if (beginMessage.getComponents() != null
                             && beginMessage.getComponents().length > 0) {
-                        beginIndciation.setComponents(this.doComponents(beginMessage.getComponents()));
+                        beginIndication.setComponents(this.doComponents(beginMessage.getComponents()));
                     }
                     this.state = TCAPDialogueState.INITIATION_RECEIVED;
 
 //                    this.tcapStack.dialogueStorage.store(this);
-                    tcapStack.onBegin(encodedData, beginIndciation);
+                    tcapStack.onBegin(encodedData, beginIndication);
 
                 } else {
                     //Protocol version 1 is not supported
@@ -197,8 +197,7 @@ public class TCAPDialogue implements Runnable {
 
                         abortMessage.encode(aos);
 
-                        this.tcapStack.getProvider().send(callingParty, calledParty,
-                                qos, aos.toByteArray());
+                        this.tcapStack.getProvider().send(callingParty, calledParty, qos, aos.toByteArray());
                     } catch (IncorrectSyntaxException ex) {
                         LOGGER.error("{}", ex);
                     } finally {

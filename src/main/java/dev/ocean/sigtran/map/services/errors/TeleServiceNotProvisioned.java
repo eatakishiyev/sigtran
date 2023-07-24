@@ -59,4 +59,11 @@ public class TeleServiceNotProvisioned implements MAPUserError {
     public void setTeleservNotProvParam(TeleservNotProvParam teleservNotProvParam) {
         this.teleservNotProvParam = teleservNotProvParam;
     }
+
+    @Override
+    public String toString() {
+        return "TeleServiceNotProvisioned{" +
+                "teleservNotProvParam=" + teleservNotProvParam +
+                '}';
+    }
 }

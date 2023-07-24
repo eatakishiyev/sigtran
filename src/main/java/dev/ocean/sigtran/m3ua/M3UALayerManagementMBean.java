@@ -4,6 +4,7 @@
  */
 package dev.ocean.sigtran.m3ua;
 
+import dev.ocean.sigtran.m3ua.configuration.M3UAConfiguration;
 import dev.ocean.sigtran.m3ua.parameters.TrafficMode;
 import dev.ocean.sigtran.m3ua.router.Route;
 import dev.ocean.sigtran.m3ua.router.RouteMode;
@@ -65,15 +66,13 @@ public interface M3UALayerManagementMBean {
 
     public void addAspToAs(String aspName, String asName) throws Exception;
 
-    public void storeConfiguration() throws Exception;
-
     public int AsCount();
 
     public As getNullRcAs();
 
     public As getAsByRc(int rc);
 
-    public void loadConfiguration() throws Exception;
+    public void loadConfiguration(M3UAConfiguration m3UAConfiguration) throws Exception;
 
     public AspImpl getAsp(String name);
 

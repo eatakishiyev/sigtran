@@ -48,4 +48,11 @@ public class UnknownSubscriberError implements MAPUserError {
     public MAPUserErrorValues getMAPUserErrorValue() {
         return MAPUserErrorValues.UNKNOWN_SUBSCRIBER;
     }
+
+    @Override
+    public String toString() {
+        return "UnknownSubscriberError{" +
+                "unknownSubscriberParam=" + unknownSubscriberParam +
+                '}';
+    }
 }

@@ -73,4 +73,11 @@ public class IllegalEquipmentParam {
     public void setExtensionContainer(ExtensionContainer extensionContainer) {
         this.extensionContainer = extensionContainer;
     }
+
+    @Override
+    public String toString() {
+        return "IllegalEquipmentParam{" +
+                "extensionContainer=" + extensionContainer +
+                '}';
+    }
 }

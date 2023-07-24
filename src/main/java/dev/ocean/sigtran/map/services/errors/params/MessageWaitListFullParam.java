@@ -75,4 +75,10 @@ public class MessageWaitListFullParam {
         this.extensionContainer = extensionContainer;
     }
 
+    @Override
+    public String toString() {
+        return "MessageWaitListFullParam{" +
+                "extensionContainer=" + extensionContainer +
+                '}';
+    }
 }

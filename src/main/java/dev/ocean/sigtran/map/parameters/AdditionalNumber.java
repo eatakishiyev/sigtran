@@ -165,4 +165,13 @@ public class AdditionalNumber implements MAPParameter {
             return this.value;
         }
     }
+
+    @Override
+    public String toString() {
+        return "AdditionalNumber{" +
+                "mscNumber=" + mscNumber +
+                ", sgsnNumber=" + sgsnNumber +
+                ", addressType=" + addressType +
+                '}';
+    }
 }

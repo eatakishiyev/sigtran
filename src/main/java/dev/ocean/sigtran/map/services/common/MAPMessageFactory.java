@@ -5,22 +5,19 @@
  */
 package dev.ocean.sigtran.map.services.common;
 
-import dev.ocean.sigtran.map.services.common.MAPMessage;
-import dev.ocean.sigtran.map.services.common.MAPArgument;
 import dev.ocean.sigtran.common.exceptions.IncorrectSyntaxException;
 import dev.ocean.sigtran.common.exceptions.UnexpectedDataException;
 import dev.ocean.sigtran.map.OperationCodes;
-import dev.ocean.sigtran.map.service.anytime.information.enquiry.AnyTimeInterrogationArg;
-import dev.ocean.sigtran.map.service.anytime.information.enquiry.AnyTimeInterrogationRes;
-import dev.ocean.sigtran.map.service.mm.event.reporting.NoteMMEventArg;
-import dev.ocean.sigtran.map.service.mm.event.reporting.NoteMMEventRes;
-import dev.ocean.sigtran.map.service.purging.PurgeMSArg;
-import dev.ocean.sigtran.map.service.purging.PurgeMSRes;
-import dev.ocean.sigtran.map.service.roaming.number.enquiry.ProvideRoamingNumberArg;
-import dev.ocean.sigtran.map.service.roaming.number.enquiry.ProvideRoamingNumberRes;
-import dev.ocean.sigtran.map.service.subscriber.information.enquiry.ProvideSubscriberInfoArg;
-import dev.ocean.sigtran.map.service.subscriber.information.enquiry.ProvideSubscriberInfoRes;
-import dev.ocean.sigtran.map.services.common.MAPResponse;
+import dev.ocean.sigtran.map.services.enquiry.AnyTimeInterrogationArg;
+import dev.ocean.sigtran.map.services.enquiry.AnyTimeInterrogationRes;
+import dev.ocean.sigtran.map.services.reporting.NoteMMEventArg;
+import dev.ocean.sigtran.map.services.reporting.NoteMMEventRes;
+import dev.ocean.sigtran.map.services.purging.PurgeMSArg;
+import dev.ocean.sigtran.map.services.purging.PurgeMSRes;
+import dev.ocean.sigtran.map.services.enquiry.ProvideRoamingNumberArg;
+import dev.ocean.sigtran.map.services.enquiry.ProvideRoamingNumberRes;
+import dev.ocean.sigtran.map.services.enquiry.ProvideSubscriberInfoArg;
+import dev.ocean.sigtran.map.services.enquiry.ProvideSubscriberInfoRes;
 import dev.ocean.sigtran.map.services.equipment.management.CheckIMEIArg;
 import dev.ocean.sigtran.map.services.equipment.management.CheckIMEIResponse;
 import dev.ocean.sigtran.map.services.ericsson.mobility.management.IN.MobilityMngtINTriggeringArg;

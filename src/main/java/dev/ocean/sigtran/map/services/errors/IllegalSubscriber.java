@@ -57,4 +57,10 @@ public class IllegalSubscriber implements MAPUserError {
         this.illegalSubscriberParam = illegalSubscriberParam;
     }
 
+    @Override
+    public String toString() {
+        return "IllegalSubscriber{" +
+                "illegalSubscriberParam=" + illegalSubscriberParam +
+                '}';
+    }
 }

@@ -6,20 +6,28 @@
 package dev.ocean.sigtran.map.services.equipment.management;
 
 import dev.ocean.sigtran.map.MAPListener;
+import dev.ocean.sigtran.map.MAPProvider;
 import dev.ocean.sigtran.map.MAPUserError;
 import dev.ocean.sigtran.map.ProviderError;
+import dev.ocean.sigtran.map.parameters.MAPApplicationContextName;
 
 /**
  *
  * @author eatakishiyev
  */
-public interface MAPEquipmentManagementContextListener extends MAPListener {
+public abstract class MAPEquipmentManagementContextListener extends MAPListener {
 
-    public void onMAPCheckIMEIIndication(Short invokeID, CheckIMEIArg arg,
-            MAPEquipmentManagementDialogue mapDialogue);
 
-    public void onMAPCheckIMEIConfirmation(Short invokeId, CheckIMEIResponse response,
+    @Override
+    public MAPApplicationContextName[] getMAPApplicationContexts() {
+        return new MAPApplicationContextName[]{MAPApplicationContextName.EQUIPMENT_MGNT_CONTEXT};
+    }
+
+    public  void onMAPCheckIMEIIndication(Short invokeID, CheckIMEIArg arg,
+                                          MAPEquipmentManagementDialogue mapDialogue){}
+
+    public  void onMAPCheckIMEIConfirmation(Short invokeId, CheckIMEIResponse response,
             MAPEquipmentManagementDialogue dialogue, MAPUserError mapUserError,
-            ProviderError providerError);
+            ProviderError providerError){}
 
 }

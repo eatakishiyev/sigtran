@@ -178,4 +178,15 @@ public class LocationInfoWithLMSI implements Serializable{
     public void setNetworkNodeNumber(ISDNAddressString networkNodeNumber) {
         this.networkNodeNumber = networkNodeNumber;
     }
+
+    @Override
+    public String toString() {
+        return "LocationInfoWithLMSI{" +
+                "networkNodeNumber=" + networkNodeNumber +
+                ", lmsi=" + lmsi +
+                ", extensionContainer=" + extensionContainer +
+                ", gprsNodeIndicator=" + gprsNodeIndicator +
+                ", additionalNumber=" + additionalNumber +
+                '}';
+    }
 }

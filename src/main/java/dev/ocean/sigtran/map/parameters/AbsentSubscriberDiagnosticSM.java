@@ -18,11 +18,12 @@ public class AbsentSubscriberDiagnosticSM implements MAPParameter {
 
     private AbsentSubscriberDiagnosticSMValues absentSubscriberDiagnosticSMValue;
 
+
     @Override
     public String toString() {
-        return new StringBuilder().append("AbsentSubscriberDiagnosticSM:[")
-                .append("AbsentSubscriberDiagnosticSMValue = ").append(absentSubscriberDiagnosticSMValue)
-                .append("]").toString();
+        return "AbsentSubscriberDiagnosticSM{" +
+                "absentSubscriberDiagnosticSMValue=" + absentSubscriberDiagnosticSMValue +
+                '}';
     }
 
     public AbsentSubscriberDiagnosticSM() {

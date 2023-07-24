@@ -77,4 +77,10 @@ public class TeleservNotProvParam {
         this.extensionContainer = extensionContainer;
     }
 
+    @Override
+    public String toString() {
+        return "TeleservNotProvParam{" +
+                "extensionContainer=" + extensionContainer +
+                '}';
+    }
 }

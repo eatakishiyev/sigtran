@@ -13,7 +13,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import dev.ocean.sigtran.m3ua.NetworkIndicator;
+import dev.ocean.sigtran.sccp.general.configuration.*;
 import org.apache.logging.log4j.*;
 import dev.ocean.sigtran.sccp.access.point.LocalPointCode;
 import dev.ocean.sigtran.sccp.access.point.MTPServiceAccessPoint;
@@ -174,8 +176,8 @@ public class SCCPLayerManagement implements SCCPLayerManagementMBean {
             throw new IOException(String.format("No SCCP EntitySet found. Name = %s", sccpEntitySetName));
         }
 
-        GlobalTitleTranslationRule rule =  globalTitleTranslator.addGlobalTitleTranslationRule(name, pattern, ri, sccpEntitySet, tt, np, nai, convetionRule);
-        logger.info("SCCP: GTT rule added to GTT " + gtt+ ", Rule : " + rule);
+        GlobalTitleTranslationRule rule = globalTitleTranslator.addGlobalTitleTranslationRule(name, pattern, ri, sccpEntitySet, tt, np, nai, convetionRule);
+        logger.info("SCCP: GTT rule added to GTT " + gtt + ", Rule : " + rule);
     }
 
     @Override
@@ -213,7 +215,7 @@ public class SCCPLayerManagement implements SCCPLayerManagementMBean {
         }
 
         sccpEntitySet.setMasterSap(mtpSap);
-        logger.info("SCCP: MTP-SAP " + sap +" set as master in SCCP-Entity-Set " + entitySet);
+        logger.info("SCCP: MTP-SAP " + sap + " set as master in SCCP-Entity-Set " + entitySet);
     }
 
     @Override
@@ -232,7 +234,7 @@ public class SCCPLayerManagement implements SCCPLayerManagementMBean {
         }
 
         sccpEntitySet.setSlaveSap(mtpSap);
-        logger.info("SCCP: MTP-SAP " + sap +" set as slave in SCCP-Entity-Set " + entitySet);
+        logger.info("SCCP: MTP-SAP " + sap + " set as slave in SCCP-Entity-Set " + entitySet);
     }
 
     public boolean isLocalSpc(int spc, NetworkIndicator ni) {
@@ -355,7 +357,7 @@ public class SCCPLayerManagement implements SCCPLayerManagementMBean {
 
     @Override
     public SccpEntitySet createSccpEntitySet(String name, SccpEntitySet.Mode mode,
-            boolean xUdtEnabled) throws IOException {
+                                             boolean xUdtEnabled) throws IOException {
         for (int i = 0; i < this.sccpEntitySets.size(); i++) {
             SccpEntitySet sccpEntitySet = sccpEntitySets.get(i);
             if (sccpEntitySet.getName().equals(name)) {
@@ -367,8 +369,7 @@ public class SCCPLayerManagement implements SCCPLayerManagementMBean {
         return sccpEntitySet;
     }
 
-    public SccpEntitySet createSccpEntitySet(String name, SccpEntitySet.Mode mode,
-            SubSystemNumber ssn, boolean xUdtEnabled) throws IOException {
+    public SccpEntitySet createSccpEntitySet(String name, SccpEntitySet.Mode mode, SubSystemNumber ssn) throws IOException {
         for (int i = 0; i < this.sccpEntitySets.size(); i++) {
             SccpEntitySet sccpEntitySet = sccpEntitySets.get(i);
             if (sccpEntitySet.getName().equals(name)) {
@@ -424,23 +425,18 @@ public class SCCPLayerManagement implements SCCPLayerManagementMBean {
     }
 
     @Override
-    public void createMtpServiceAccessPoint(String name, int dpc, int opc, int ni, String targetMessageType) throws IOException {
+    public void createMtpServiceAccessPoint(String name, int dpc, int opc, NetworkIndicator ni, MessageType targetMessageType) throws IOException {
         MTPServiceAccessPoint mtpSap = this.getMtpSap(name);
         if (mtpSap != null) {
             throw new IOException(String.format("MtpSap already defined.OPC = %s DPC = %s NI = %s NAME = %s", mtpSap.getOpc(), mtpSap.getDpc(), mtpSap.getNi(), mtpSap.getName()));
         }
-        NetworkIndicator networkIndicator = NetworkIndicator.getInstance(ni);
-        if (networkIndicator == NetworkIndicator.UNKNOWN) {
-            throw new IOException("Unknown network indicator");
-        }
 
-        mtpSap = new MTPServiceAccessPoint(name, dpc, opc, networkIndicator);
-        if (targetMessageType != null
-                && !targetMessageType.trim().isEmpty()) {
-            mtpSap.setTargetMessageType(MessageType.valueOf(targetMessageType));
-        }
+        mtpSap = new MTPServiceAccessPoint(name, dpc, opc, ni);
+
+        mtpSap.setTargetMessageType(targetMessageType);
+
         this.mtpSaps.add(mtpSap);
-        logger.info("---SCCP: MTP-SAP created: " + mtpSap);
+        logger.info("SCCP: MTP-SAP created: " + mtpSap);
     }
 
     @Override
@@ -456,339 +452,121 @@ public class SCCPLayerManagement implements SCCPLayerManagementMBean {
     }
 
     @Override
-    public void loadConfiguration() throws Exception {
-        logger.info("SCCP: Loading configuration...");
-        SAXBuilder saxBuilder = new SAXBuilder();
+    public void loadConfiguration(SCCPConfiguration sccpConfiguration) throws Exception {
+        logger.info("[SCCP]: Loading configuration...");
+        logger.info("[SCCP]: Loading Local SPC configuration...");
+        this.createLocalPointCode(sccpConfiguration.getLocalPointCode().getName(),
+                sccpConfiguration.getLocalPointCode().getSpc(),
+                sccpConfiguration.getLocalPointCode().getNetworkIndicator());
 
-        Document document = saxBuilder.build(stack.getConfigFile());
-        XPathFactory xpathFactory = XPathFactory.instance();
+        logger.info("[SCCP]: Set minimum not segmented message size to " + stack.getMinNotSegmentedMessageSize());
+        stack.setMinNotSegmentedMessageSize(sccpConfiguration.getMinNotSegmentedMessageSize());
 
-        logger.info("SCCP: Loading Local SPC configuration...");
-        XPathExpression expression = xpathFactory.compile("sccp/localPointCode");
-        Element localSpcElement = (Element) expression.evaluateFirst(document);
+        logger.info("[SCCP]: Set maximum message size to " + stack.getMaxMessageSize());
+        stack.setMaxMessageSize(sccpConfiguration.getMaxMessageSize());
 
-        this.createLocalPointCode(localSpcElement.getAttributeValue("name"),
-                localSpcElement.getAttribute("spc").getIntValue(),
-                NetworkIndicator.getInstance(localSpcElement.getAttribute("ni").getIntValue()));
+        logger.info("[SCCP]: Set remove spc from SCCP Address flag to " + stack.isRemoveSpc());
+        stack.setRemoveSpc(sccpConfiguration.getRemoveSpc());
 
-//        Local subsystem initialization from the configuration
-//        expression = xpathFactory.compile("localSubSystem");
-//        List<Element> localSsnElements = expression.evaluate(localSpcElement);
-//        for (Element localSsnElement : localSsnElements) {
-//            this.createLocalSubSystem(SubSystemNumber.createInstance(localSsnElement.getAttribute("ssn").getIntValue()),
-//                    localSsnElement.getAttributeValue("class"));
-//        }
-        expression = xpathFactory.compile("sccp/minNotSegmentedMessageSize");
-        Element minNotSegmentedMessageSizeElement = (Element) expression.evaluateFirst(document);
-        stack.setMinNotSegmentedMessageSize(Integer.valueOf(minNotSegmentedMessageSizeElement.getValue()));
-        logger.info("SCCP: Set minimum not segmented message size to " + stack.getMinNotSegmentedMessageSize());
+        logger.info("[SCCP]: Set HopCounter to " + stack.getHopCounter());
+        stack.setHopCounter(sccpConfiguration.getHopCounter());
 
-        expression = xpathFactory.compile("sccp/maxMessageSize");
-        Element maxMessageSizeElement = (Element) expression.evaluateFirst(document);
-        stack.setMaxMessageSize(Integer.valueOf(maxMessageSizeElement.getValue()));
-        logger.info("SCCP: Set maximum message size to " + stack.getMaxMessageSize());
+        logger.info("[SCCP]: Set reassembly timer to " + stack.getReassemblyTimer());
+        stack.setReassemblyTimer(sccpConfiguration.getReassemblyTimer());
 
-        expression = xpathFactory.compile("sccp/removeSpc");
-        Element removeSpcElement = (Element) expression.evaluateFirst(document);
-        stack.setRemoveSpc(Boolean.valueOf(removeSpcElement.getValue()));
-        logger.info("SCCP: Set remove spc from SCCP Address flag to " + stack.isRemoveSpc());
+        logger.info("[SCCP]: Set SST Timer Min to " + stack.getSstTimerMin());
+        stack.setSstTimerMin(sccpConfiguration.getSstTimerMin());
 
-        expression = xpathFactory.compile("sccp/hopCounter");
-        Element hopCounterElement = (Element) expression.evaluateFirst(document);
-        stack.setHopCounter(Integer.valueOf(hopCounterElement.getValue()));
-        logger.info("SCCP: Set HopCounter to " + stack.getHopCounter());
+        logger.info("[SCCP]: Set SST Timer Max to " + stack.getSstTimerMax());
+        stack.setSstTimerMax(sccpConfiguration.getSstTimerMax());
 
-        expression = xpathFactory.compile("sccp/reassemblyTimer");
-        Element reassemblyTimerElement = (Element) expression.evaluateFirst(document);
-        stack.setReassemblyTimer(Integer.valueOf(reassemblyTimerElement.getValue()));
-        logger.info("SCCP: Set reassembly timer to " + stack.getReassemblyTimer());
+        logger.info("[SCCP]: Set SST Timer Increase By to " + stack.getSstTimerIncreaseBy());
+        stack.setSstTimerIncreaseBy(sccpConfiguration.getSstTimerIncreaseBy());
 
-        expression = xpathFactory.compile("sccp/sstTimerMin");
-        Element sstTimerMinElement = (Element) expression.evaluateFirst(document);
-        stack.setSstTimerMin(Integer.valueOf(sstTimerMinElement.getValue()));
-        logger.info("SCCP: Set SST Timer Min to " + stack.getSstTimerMin());
+        logger.info("[SCCP]: Set Ignore SST to " + stack.isIgnoreSST());
+        stack.setIgnoreSST(sccpConfiguration.getSstIgnore());
 
-        expression = xpathFactory.compile("sccp/sstTimerMax");
-        Element sstTimerMaxElement = (Element) expression.evaluateFirst(document);
-        stack.setSstTimerMax(Integer.valueOf(sstTimerMaxElement.getValue()));
-        logger.info("SCCP: Set SST Timer Max to " + stack.getSstTimerMax());
 
-        expression = xpathFactory.compile("sccp/sstTimerIncreaseBy");
-        Element sstTimerIncreaseByElement = (Element) expression.evaluateFirst(document);
-        stack.setSstTimerIncreaseBy(Integer.valueOf(sstTimerIncreaseByElement.getValue()));
-        logger.info("SCCP: Set SST Timer Increase By to " + stack.getSstTimerIncreaseBy());
+        logger.info("[SCCP]: Loading RemoteSignallingPoints...");
+        for (dev.ocean.sigtran.sccp.general.configuration.RemoteSignallingPoint remoteSignallingPoint : sccpConfiguration.getRemoteSignallingPoints()) {
+            this.createRemoteSignallingPoint(remoteSignallingPoint.getName(), remoteSignallingPoint.getSpc(),
+                    remoteSignallingPoint.getConcerned());
 
-        expression = xpathFactory.compile("sccp/sstIgnore");
-        Element ignoreSstElement = (Element) expression.evaluateFirst(document);
-        stack.setIgnoreSST(Boolean.valueOf(ignoreSstElement.getValue()));
-        logger.info("SCCP: Set Ignore SST to " + stack.isIgnoreSST());
 
-        logger.info("SCCP: Loading RemoteSignallingPoints...");
-        expression = xpathFactory.compile("sccp/remoteSignallingPoint");
-        List<Element> remoteSpcElements = expression.evaluate(document);
-        for (Element remoteSpcElement : remoteSpcElements) {
-            this.createRemoteSignallingPoint(remoteSpcElement.getAttributeValue("name"),
-                    remoteSpcElement.getAttribute("spc").getIntValue(),
-                    remoteSpcElement.getAttribute("concerned").getBooleanValue());
-
-            expression = xpathFactory.compile("remoteSubSystem");
-            List<Element> remoteSsnElements = expression.evaluate(remoteSpcElement);
-            for (Element remoteSsnElement : remoteSsnElements) {
-                this.createRemoteSubsystem(remoteSpcElement.getAttributeValue("name"), SubSystemNumber.getInstance(remoteSsnElement.getAttribute("ssn").getIntValue()));
+            for (SubSystemNumber remoteSsn : remoteSignallingPoint.getRemoteSubSystems()) {
+                logger.info("[SCCP]: Registering remote SSN{} on SPC {}({})", remoteSsn,
+                        remoteSignallingPoint.getName(), remoteSignallingPoint.getSpc());
+                this.createRemoteSubsystem(remoteSignallingPoint.getName(), remoteSsn);
             }
         }
 
-        logger.info("SCCP: Loading MTPSaps...");
-        expression = xpathFactory.compile("sccp/mtpSap");
-        List<Element> mtpSapElements = expression.evaluate(document);
-        for (Element mtpSapElement : mtpSapElements) {
-            this.createMtpServiceAccessPoint(mtpSapElement.getAttributeValue("name"),
-                    mtpSapElement.getAttribute("dpc").getIntValue(),
-                    mtpSapElement.getAttribute("opc").getIntValue(),
-                    mtpSapElement.getAttribute("ni").getIntValue(),
-                    mtpSapElement.getAttributeValue("targetMessageType"));
+        logger.info("[SCCP]: Loading MTPSaps...");
+        for (MtpSap mtpSap : sccpConfiguration.getMtpSaps()) {
+            this.createMtpServiceAccessPoint(mtpSap.getName(), mtpSap.getDpc(), mtpSap.getOpc(), mtpSap.getNi(),
+                    mtpSap.getTargetMessageType());
         }
 
-        logger.info("SCCP: Loading SCCP Entity sets...");
-        expression = xpathFactory.compile("sccp/sccpEntitySet");
-        List<Element> sccpEntitySetElements = expression.evaluate(document);
-        for (Element sccpEntitySetElement : sccpEntitySetElements) {
-            this.createSccpEntitySet(sccpEntitySetElement.getAttributeValue("name"),
-                    SccpEntitySet.Mode.getInstance(sccpEntitySetElement.getAttributeValue("mode")),
-                    sccpEntitySetElement.getAttribute("ssn") != null
-                    ? SubSystemNumber.getInstance(sccpEntitySetElement.
-                            getAttribute("ssn").getIntValue()) : null,
-                    sccpEntitySetElement.getAttribute("xudt") != null
-                    ? sccpEntitySetElement.getAttribute("xudt").getBooleanValue()
-                    : false);
+        logger.info("[SCCP]: Loading SCCP Entity sets...");
 
-            expression = xpathFactory.compile("mtpSap");
-            mtpSapElements = expression.evaluate(sccpEntitySetElement);
-            for (int i = 0; i < mtpSapElements.size(); i++) {
-                Element mtpSapElement = mtpSapElements.get(i);
+        for (SCCPEntitySet sccpEntitySet : sccpConfiguration.getSccpEntitySets()) {
+            this.createSccpEntitySet(sccpEntitySet.getName(), sccpEntitySet.getMode(), sccpEntitySet.getSsn());
+
+            for (int i = 0; i < sccpEntitySet.getMtpSaps().length; i++) {
+                String mtpSapName = sccpEntitySet.getMtpSaps()[i];
                 switch (i) {
                     case 0:
-                        this.setMasterSap(mtpSapElement.getAttributeValue("value"), sccpEntitySetElement.getAttributeValue("name"));
+                        this.setMasterSap(mtpSapName, sccpEntitySet.getName());
                         break;
                     case 1:
-                        this.setSlaveSap(mtpSapElement.getAttributeValue("value"), sccpEntitySetElement.getAttributeValue("name"));
+                        this.setSlaveSap(mtpSapName, sccpEntitySet.getName());
                         break;
                     default:
-                        logger.warn("SCCP: More than 2 MTP SAP count is not acceptable for SCCP Entity Sets");
+                        logger.warn("[SCCP]: More than 2 MTP SAP count is not acceptable for SCCP Entity Sets");
                         break;
                 }
             }
         }
 
-        logger.info("SCCP: Loading SCCP Global Title Translation Rules...");
-        expression = xpathFactory.compile("sccp/translator");
-        List<Element> translatorElements = expression.evaluate(document);
-        for (Element translatorElement : translatorElements) {
-            GlobalTitleIndicator gtIndicator = GlobalTitleIndicator.getInstance((byte) translatorElement.getAttribute("gtIndicator").getIntValue());
+        logger.info("[SCCP]: Loading SCCP Global Title Translation Rules...");
+
+        for (Translator translator : sccpConfiguration.getTranslators()) {
+            GlobalTitleIndicator gtIndicator = translator.getGlobalTitleIndicator();
             switch (gtIndicator) {
                 case NATURE_OF_ADDRESS_IND_ONLY:
-                    this.createGlobalTitleTranslator(translatorElement.getAttributeValue("name"),
-                            NatureOfAddress.getInstance((byte) translatorElement.getAttribute("natureOfAddress").getIntValue()));
+                    this.createGlobalTitleTranslator(translator.getName(), translator.getNatureOfAddress());
                     break;
                 case TRANSLATION_TYPE_NP_ENC:
-                    this.createGlobalTitleTranslator(translatorElement.getAttributeValue("name"),
-                            translatorElement.getAttribute("translationType").getIntValue(),
-                            NumberingPlan.getInstance((byte) translatorElement.getAttribute("numberingPlan").getIntValue()));
+                    this.createGlobalTitleTranslator(translator.getName(), translator.getTranslationType(),
+                            translator.getNumberingPlan());
                     break;
                 case TRANSLATION_TYPE_ONLY:
-                    this.createGlobalTitleTranslator(translatorElement.getAttributeValue("name"),
-                            translatorElement.getAttribute("translationType").getIntValue());
+                    this.createGlobalTitleTranslator(translator.getName(), translator.getTranslationType());
                     break;
                 case TRANSLATION_TYPE_NP_ENC_NATURE_OF_ADDRESS_IND:
-                    this.createGlobalTitleTranslator(translatorElement.getAttributeValue("name"),
-                            translatorElement.getAttribute("translationType").getIntValue(),
-                            NumberingPlan.getInstance((byte) translatorElement.getAttribute("numberingPlan").getIntValue()),
-                            NatureOfAddress.getInstance((byte) translatorElement.getAttribute("natureOfAddress").getIntValue()));
+                    this.createGlobalTitleTranslator(translator.getName(), translator.getTranslationType(),
+                            translator.getNumberingPlan(), translator.getNatureOfAddress());
                     break;
                 default:
                     continue;
             }
 
-            expression = xpathFactory.compile("rule");
-            List<Element> ruleElements = expression.evaluate(translatorElement);
-            for (Element ruleElement : ruleElements) {
-                Attribute riAttr = ruleElement.getAttribute("routingIndicator");
-                Attribute ttAttr = ruleElement.getAttribute("translationType");
-                Attribute naiAttr = ruleElement.getAttribute("natureOfAddress");
-                Attribute npAttr = ruleElement.getAttribute("numberingPlan");
 
-                this.createGlobalTitleTranslationRule(translatorElement.getAttributeValue("name"),
-                        ruleElement.getAttributeValue("name"),
-                        ruleElement.getAttributeValue("gtPattern"),
-                        riAttr == null ? null : RoutingIndicator.getInstance((byte) riAttr.getIntValue()),
-                        ruleElement.getAttributeValue("sccpEntitySet"),
-                        ttAttr == null ? null : ttAttr.getIntValue(),
-                        naiAttr == null ? null : NatureOfAddress.getInstance((byte) naiAttr.getIntValue()),
-                        npAttr == null ? null : NumberingPlan.getInstance((byte) npAttr.getIntValue()),
-                        ruleElement.getAttributeValue("conversionRule"));
+            for (TranslatorRule translatorRule : translator.getRules()) {
+                this.createGlobalTitleTranslationRule(translator.getName(), translatorRule.getName(),
+                        translatorRule.getGtPattern(), translatorRule.getRoutingIndicator(),
+                        translatorRule.getSccpEntitySet(), translatorRule.getTranslationType(),
+                        translatorRule.getNatureOfAddress(), translatorRule.getNumberingPlan(),
+                        translatorRule.getConversionRule());
             }
-
         }
     }
 
-    @Override
-    public void storeConfiguration() throws Exception {
-        logger.info("SCCP: Storing configuration...");
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        File originalFile = new File(stack.getConfigFile());
-        File bkpFile = new File(originalFile.getName().concat(dateFormat.format(new Date())));
-        originalFile.renameTo(bkpFile);
 
-        Document document = new Document();
-        Element rootElement = new Element("sccp");
-
-        Element minNotSegmentedMessageSize = new Element("minNotSegmentedMessageSize");
-        minNotSegmentedMessageSize.setText(String.valueOf(stack.getMinNotSegmentedMessageSize()));
-        rootElement.addContent(minNotSegmentedMessageSize);
-
-        Element maxMessageSize = new Element("maxMessageSize");
-        maxMessageSize.setText(String.valueOf(stack.getMaxMessageSize()));
-        rootElement.addContent(maxMessageSize);
-
-        Element removeSpc = new Element("removeSpc");
-        removeSpc.setText(String.valueOf(stack.isRemoveSpc()));
-        rootElement.addContent(removeSpc);
-
-        Element hopCounter = new Element("hopCounter");
-        hopCounter.setText(String.valueOf(stack.getHopCounter()));
-        rootElement.addContent(hopCounter);
-
-        Element reassemblyTimer = new Element("reassemblyTimer");
-        reassemblyTimer.setText(String.valueOf(stack.getReassemblyTimer()));
-        rootElement.addContent(reassemblyTimer);
-
-        Element sstTimerMin = new Element("sstTimerMin");
-        sstTimerMin.setText(String.valueOf(stack.getSstTimerMin()));
-        rootElement.addContent(sstTimerMin);
-
-        Element sstTimerMax = new Element("sstTimerMax");
-        sstTimerMax.setText(String.valueOf(stack.getSstTimerMax()));
-        rootElement.addContent(sstTimerMax);
-
-        Element sstTimerIncreaseBy = new Element("sstTimerIncreaseBy");
-        sstTimerIncreaseBy.setText(String.valueOf(stack.getSstTimerIncreaseBy()));
-        rootElement.addContent(sstTimerIncreaseBy);
-
-        Element sstIgnore = new Element("sstIgnore");
-        sstIgnore.setText(String.valueOf(stack.isIgnoreSST()));
-        rootElement.addContent(sstIgnore);
-
-        Element localSpcElement = new Element("localPointCode");
-        localSpcElement.setAttribute("name", localPointCode.getName()).
-                setAttribute("ni", String.valueOf(localPointCode.getNi().value())).
-                setAttribute("spc", String.valueOf(localPointCode.getOpc()));
-
-//        for (SubSystem localSubSystem : localSubSystems) {
-//            Element localSsnElement = new Element("localSubSystem");
-//            localSsnElement.setAttribute("ssn", String.valueOf(localSubSystem.getSsn().value()));
-//            localSsnElement.setAttribute("class", localSubSystem.clazz);
-//            localSpcElement.addContent(localSsnElement);
-//        }
-        rootElement.addContent(localSpcElement);
-
-        for (RemoteSignallingPoint remoteSignallingPoint : remoteSignallingPoints) {
-            Element remoteSpcElement = new Element("remoteSignallingPoint");
-            remoteSpcElement.setAttribute("name", remoteSignallingPoint.getName()).
-                    setAttribute("spc", String.valueOf(remoteSignallingPoint.getSpc())).
-                    setAttribute("concerned", String.valueOf(remoteSignallingPoint.isConcerned()));
-            for (RemoteSubSystem remoteSubSystem : remoteSignallingPoint.remoteSubSystems) {
-                Element remoteSsnElement = new Element("remoteSubSystem");
-                remoteSsnElement.setAttribute("ssn", String.valueOf(remoteSubSystem.getRemoteSSN().value()));
-                remoteSpcElement.addContent(remoteSsnElement);
-            }
-            rootElement.addContent(remoteSpcElement);
-        }
-
-        for (MTPServiceAccessPoint mtpSap : mtpSaps) {
-            Element mtpSapElement = new Element("mtpSap");
-            mtpSapElement.setAttribute("name", mtpSap.getName()).
-                    setAttribute("dpc", String.valueOf(mtpSap.getDpc())).
-                    setAttribute("opc", String.valueOf(mtpSap.getOpc())).
-                    setAttribute("ni", String.valueOf(mtpSap.getNi().value()));
-            if (mtpSap.getTargetMessageType() != null) {
-                mtpSapElement.setAttribute("targetMessageType", mtpSap.getTargetMessageType().name());
-            }
-            rootElement.addContent(mtpSapElement);
-        }
-
-        for (SccpEntitySet sccpEntitySet : sccpEntitySets) {
-            Element sccpEntitySetElement = new Element("sccpEntitySet");
-            sccpEntitySetElement.setAttribute("name", sccpEntitySet.getName());
-            if (sccpEntitySet.getSsn() != null) {
-                sccpEntitySetElement.setAttribute("ssn", String.valueOf(sccpEntitySet.getSsn().value()));
-            }
-
-            sccpEntitySetElement.setAttribute("mode", sccpEntitySet.getMode().name());
-
-            if (sccpEntitySet.getMasterSap() != null) {
-                Element masterMtpSapElement = new Element("mtpSap").setAttribute("value", sccpEntitySet.getMasterSap().getName());
-                sccpEntitySetElement.addContent(masterMtpSapElement);
-            }
-
-            if (sccpEntitySet.getSlaveSap() != null) {
-                Element slaveMtpSapElement = new Element("mtpSap").setAttribute("value", sccpEntitySet.getSlaveSap().getName());
-                sccpEntitySetElement.addContent(slaveMtpSapElement);
-            }
-
-            rootElement.addContent(sccpEntitySetElement);
-        }
-
-        for (GlobalTitleTranslator gtTranslator : globalTitleTranslators) {
-            Element gttElement = new Element("translator");
-            gttElement.setAttribute("name", gtTranslator.getName()).
-                    setAttribute("gtIndicator", String.valueOf(gtTranslator.getGlobalTitleIndicator().value()));
-            switch (gtTranslator.getGlobalTitleIndicator()) {
-                case NATURE_OF_ADDRESS_IND_ONLY:
-                    gttElement.setAttribute("natureOfAddress", String.valueOf(gtTranslator.getNatureOfAddress().value()));
-                    break;
-                case TRANSLATION_TYPE_NP_ENC:
-                    gttElement.setAttribute("translationType", String.valueOf(gtTranslator.getTranslationType())).
-                            setAttribute("numberingPlan", String.valueOf(gtTranslator.getNumberingPlan().value()));
-                    break;
-                case TRANSLATION_TYPE_ONLY:
-                    gttElement.setAttribute("translationType", String.valueOf(gtTranslator.getTranslationType()));
-                    break;
-                case TRANSLATION_TYPE_NP_ENC_NATURE_OF_ADDRESS_IND:
-                    gttElement.setAttribute("translationType", String.valueOf(gtTranslator.getTranslationType())).
-                            setAttribute("numberingPlan", String.valueOf(gtTranslator.getNumberingPlan().value())).
-                            setAttribute("natureOfAddress", String.valueOf(gtTranslator.getNatureOfAddress().value()));
-                    break;
-            }
-
-            for (GlobalTitleTranslationRule gttRule : gtTranslator.getGlobalTitleTranslationRules()) {
-                Element gttRuleElement = new Element("rule");
-                gttRuleElement.setAttribute("name", gttRule.getName()).
-                        setAttribute("gtPattern", gttRule.getGtaiPattern().pattern()).
-                        setAttribute("natureOfAddress", String.valueOf(gttRule.getNatureOfAddress().value())).
-                        setAttribute("numberingPlan", String.valueOf(gttRule.getNumberingPlan().value())).
-                        setAttribute("routingIndicator", String.valueOf(gttRule.getRoutingIndicator().value())).
-                        setAttribute("translationType", String.valueOf(gttRule.getTranslationType())).
-                        setAttribute("sccpEntitySet", gttRule.getSccpEntitySet().getName());
-                if (gttRule.getConversionRule() != null) {
-                    gttRuleElement.setAttribute("conversionRule", gttRule.getConversionRule());
-                }
-
-                gttElement.addContent(gttRuleElement);
-            }
-
-            rootElement.addContent(gttElement);
-        }
-
-        document.setRootElement(rootElement);
-        XMLOutputter xMLOutputter = new XMLOutputter(Format.getPrettyFormat());
-
-        xMLOutputter.output(document, new FileOutputStream(stack.getConfigFile()));
-    }
 
     @Override
     public LocalPointCode createLocalPointCode(String name, int opc, NetworkIndicator ni) throws IOException {
         this.localPointCode = new LocalPointCode(name, opc, ni);
-        logger.info("Local SPC created successfull: " + localPointCode);
+        logger.info("[SCCP]:Local SPC created successfull: " + localPointCode);
         return this.localPointCode;
     }
 

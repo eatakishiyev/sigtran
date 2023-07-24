@@ -6,22 +6,31 @@
 package dev.ocean.sigtran.map.services.mobility.sms;
 
 import dev.ocean.sigtran.map.MAPListener;
+import dev.ocean.sigtran.map.MAPProvider;
 import dev.ocean.sigtran.map.MAPUserError;
 import dev.ocean.sigtran.map.ProviderError;
+import dev.ocean.sigtran.map.parameters.MAPApplicationContextName;
 
 /**
- *
  * @author eatakishiyev
  */
-public interface MAPShortMessageRelayContextListener extends MAPListener {
+public abstract class MAPShortMessageRelayContextListener extends MAPListener {
 
-    public void onMAPMtForwardSmIndication(Short invokeId, MTForwardSMArg arg,
-            MAPShortMessageRelayDialogue mapDialogue);
 
-    public void onMAPForwardSmIndication(Short invokeId, MAPForwardSmArg arg,
-            MAPShortMessageRelayDialogue mapDialogue);
 
-    public void onMAPForwardSmConfirmation(Short invokeId, MAPForwardSMResponse response,
-            MAPShortMessageRelayDialogue dialogue, MAPUserError mapUserError,
-            ProviderError providerError);
+    @Override
+    public MAPApplicationContextName[] getMAPApplicationContexts() {
+        return new MAPApplicationContextName[]{MAPApplicationContextName.SHORT_MSG_MT_RELAY_CONTEXT,
+                MAPApplicationContextName.SHORT_MSG_MO_RELAY_CONTEXT};
+    }
+
+    public  void onMAPMtForwardSmIndication(Short invokeId, MTForwardSMArg arg,
+                                           MAPShortMessageRelayDialogue mapDialogue) {}
+
+    public  void onMAPForwardSmIndication(Short invokeId, MAPForwardSmArg arg,
+                                         MAPShortMessageRelayDialogue mapDialogue) {}
+
+    public  void onMAPForwardSmConfirmation(Short invokeId, MAPForwardSMResponse response,
+                                           MAPShortMessageRelayDialogue dialogue, MAPUserError mapUserError,
+                                           ProviderError providerError) {}
 }
