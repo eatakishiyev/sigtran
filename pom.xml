@@ -6,16 +6,23 @@
     <artifactId>sigtran</artifactId>
     <version>1.0</version>
 
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.20.0</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.7</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.20.0</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.7</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mobicents.protocols.asn</groupId>
@@ -23,9 +30,9 @@
             <version>2.2.0-143</version>
         </dependency>
         <dependency>
-            <groupId>dev.ocean</groupId>
+            <groupId>azrc.az</groupId>
             <artifactId>fsm</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
@@ -33,24 +40,19 @@
             <version>2.0.6.1</version>
         </dependency>
         <dependency>
-            <groupId>dev.ocean</groupId>
+            <groupId>azrc.az</groupId>
             <artifactId>gsm-string-utils</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>dev.ocean</groupId>
+            <groupId>azrc.az</groupId>
             <artifactId>network-protocols</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.linked.logics</groupId>
-            <artifactId>linkedlogics-performance-counter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.4.0</version>
+            <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -64,46 +66,20 @@
             <version>1.18.26</version>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>gitlab-maven</id>
-            <url>https://gitlab.azerconnect.az/api/v4/projects/162/packages/maven</url>
-        </repository>
-    </repositories>
-    <distributionManagement>
-        <repository>
-            <id>gitlab-maven</id>
-            <url>https://gitlab.azerconnect.az/api/v4/projects/162/packages/maven</url>
-        </repository>
-        <snapshotRepository>
-            <id>gitlab-maven</id>
-            <url>https://gitlab.azerconnect.az/api/v4/projects/162/packages/maven</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
             </plugin>
         </plugins>
     </build>
+    <distributionManagement>
+        <repository>
+            <id>nexus-release</id>
+            <url>http://10.220.25.95:8081/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
+
 </project>

@@ -3,22 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dev.ocean.sigtran;
+package azrc.az.sigtran;
 
-import dev.ocean.sigtran.cap.CAPStackImpl;
-import dev.ocean.sigtran.m3ua.M3UAStack;
-import dev.ocean.sigtran.m3ua.M3UAStackImpl;
-import dev.ocean.sigtran.m3ua.configuration.M3UAConfiguration;
-import dev.ocean.sigtran.map.MAPStackImpl;
-import dev.ocean.sigtran.sccp.address.SubSystemNumber;
-import dev.ocean.sigtran.sccp.general.SCCPStack;
-import dev.ocean.sigtran.sccp.general.SCCPStackImpl;
-import dev.ocean.sigtran.sccp.general.SCCPUser;
-import dev.ocean.sigtran.sccp.general.configuration.SCCPConfiguration;
-import dev.ocean.sigtran.tcap.TCAPStack;
-import dev.ocean.sigtran.tcap.TCUser;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import azrc.az.sigtran.cap.CAPStackImpl;
+import azrc.az.sigtran.m3ua.M3UAStack;
+import azrc.az.sigtran.m3ua.M3UAStackImpl;
+import azrc.az.sigtran.m3ua.configuration.M3UAConfiguration;
+import azrc.az.sigtran.map.MAPStackImpl;
+import azrc.az.sigtran.sccp.address.SubSystemNumber;
+import azrc.az.sigtran.sccp.general.SCCPStack;
+import azrc.az.sigtran.sccp.general.SCCPStackImpl;
+import azrc.az.sigtran.sccp.general.SCCPUser;
+import azrc.az.sigtran.sccp.general.configuration.SCCPConfiguration;
+import azrc.az.sigtran.tcap.TCAPStack;
+import azrc.az.sigtran.tcap.TCUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
@@ -31,7 +31,7 @@ import java.io.IOException;
  */
 public class Sigtran {
 
-    private static Logger logger = LogManager.getLogger(Sigtran.class);
+    private static Logger logger = LoggerFactory.getLogger(Sigtran.class);
 
     private M3UAStackImpl m3uaStack;
     private SCCPStack sccpStack;
