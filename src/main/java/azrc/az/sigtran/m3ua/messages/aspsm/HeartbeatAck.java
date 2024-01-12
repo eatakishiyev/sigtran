@@ -1,0 +1,85 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package azrc.az.sigtran.m3ua.messages.aspsm;
+
+import java.io.IOException;
+
+import azrc.az.sigtran.m3ua.Message;
+import azrc.az.sigtran.m3ua.MessageClass;
+import azrc.az.sigtran.m3ua.MessageType;
+import azrc.az.sigtran.m3ua.io.M3UAMessageByteArrayOutputStream;
+import azrc.az.sigtran.m3ua.io.M3UAParameterByteArrayInputStream;
+import azrc.az.sigtran.m3ua.io.M3UAParameterByteArrayOutputStream;
+import azrc.az.sigtran.m3ua.parameters.HeartBeatData;
+import azrc.az.sigtran.m3ua.parameters.ParameterTag;
+
+/**
+ *
+ * @author root
+ */
+public class HeartbeatAck extends Message {
+
+    private final MessageClass messageClass = MessageClass.ASPSM;
+    private final MessageType messageType = MessageType.BEAT_ACK;
+    private HeartBeatData heartBeatData;
+
+    public HeartbeatAck() {
+    }
+
+    /**
+     * @return the heartBeatData
+     */
+    public HeartBeatData getHeartBeatData() {
+        return heartBeatData;
+    }
+
+    /**
+     * @param heartBeatData the heartBeatData to set
+     */
+    public void setHeartBeatData(HeartBeatData heartBeatData) {
+        this.heartBeatData = heartBeatData;
+    }
+
+    public void setHeartBeatData(byte[] data) {
+        this.heartBeatData = new HeartBeatData(data);
+    }
+
+    @Override
+    public void encode(M3UAMessageByteArrayOutputStream baos) throws IOException {
+        M3UAParameterByteArrayOutputStream tmpOutputStream = new M3UAParameterByteArrayOutputStream(272);
+        if (heartBeatData != null) {
+            heartBeatData.encode(tmpOutputStream);
+        }
+        byte[] data = tmpOutputStream.toByteArray();
+        baos.write(data);
+    }
+
+    @Override
+    public void decode(M3UAParameterByteArrayInputStream bais) throws IOException {
+        ParameterTag tags = ParameterTag.getInstance(bais.readParameterTag());
+        switch (tags) {
+            case HEARTBEAD_DATA:
+                heartBeatData = new HeartBeatData();
+                heartBeatData.decode(bais);
+                break;
+        }
+    }
+
+    @Override
+    public MessageClass getMessageClass() {
+        return this.messageClass;
+    }
+
+    @Override
+    public MessageType getMessageType() {
+        return this.messageType;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("HeartBeatAck [HeartBeatData = %s]", heartBeatData);
+    }
+
+}
