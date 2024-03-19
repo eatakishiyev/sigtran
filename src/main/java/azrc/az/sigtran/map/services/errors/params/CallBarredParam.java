@@ -148,7 +148,7 @@ public class CallBarredParam {
                     switch (tag) {
                         case Tag.ENUMERATED:
                             if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-                                this.callBarringCause = CallBarringCause.getInstance((int) ais.getTagClass());
+                                this.callBarringCause = CallBarringCause.getInstance((int) ais.readInteger());
                             } else {
                                 throw new IncorrectSyntaxException(String.format("Expecting Tag[ENUMERATED] Class[UNIVERSAL]."
                                         + "Received Tag[%s] Class[%s]", tag, ais.getTagClass()));

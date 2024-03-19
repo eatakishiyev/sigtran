@@ -66,6 +66,8 @@ public final class AspImpl extends Asp implements SctpListener {
     protected long aspActiveTimeOut = 2000;//2 seconds
     protected long aspInactiveTimeOut = 2000;//2 seconds
 
+    private long delayWithSecondsOnAssociationStart = 10;
+
     protected transient final ManagementMessageHandler managementMessageHandler;
     protected transient final StateMaintenanceMessageHandler stateMaintenanceMessageHandler;
     protected transient final TrafficManagementMessageHandler trafficManagementMessageHandler;
@@ -136,6 +138,7 @@ public final class AspImpl extends Asp implements SctpListener {
     @Override
     public void start() throws IOException {
         sctpAssociation.open();
+
     }
 
     @Override
