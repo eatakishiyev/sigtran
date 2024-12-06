@@ -8,6 +8,8 @@ package azrc.az.sigtran.cap;
 import azrc.az.sigtran.tcap.TCAPProvider;
 import azrc.az.sigtran.tcap.TCUser;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  *
  * @author eatakishiyev
@@ -28,4 +30,5 @@ public interface CAPStack extends TCUser {
     
     public CAPDialogueFactory getCAPDialogueFactory();
 
+    ConcurrentHashMap<Long, CAPDialogue> getDialogues();
 }

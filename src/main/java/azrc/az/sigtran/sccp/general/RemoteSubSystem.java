@@ -12,9 +12,9 @@ import azrc.az.sigtran.sccp.address.SubSystemNumber;
 import azrc.az.sigtran.sccp.messages.management.SCCPManagementMessageFactory;
 import azrc.az.sigtran.sccp.messages.management.SubsystemStatusTest;
 import azrc.az.sigtran.sccp.parameters.SubsystemMultiplicityIndicator;
+import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;

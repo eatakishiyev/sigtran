@@ -15,7 +15,6 @@ import azrc.az.sigtran.tcap.primitives.tr.TRNotice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -322,7 +321,6 @@ public class MAPStackImpl implements MAPStack {
 
     public void addMapUser(MAPListener mapUser) {
         for (MAPApplicationContextName mapApplicationContextName : mapUser.getMAPApplicationContexts()) {
-            logger.info("MAPUser added {}, {}", mapUser, mapApplicationContextName);
             users.put(mapApplicationContextName, mapUser);
         }
         mapUser.setMapProvider(mapProvider);

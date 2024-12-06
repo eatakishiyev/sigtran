@@ -265,7 +265,6 @@ public class TCAPDialogue implements Runnable {
 
                                 this.state = TCAPDialogueState.ACTIVE;
 
-//                                this.tcapStack.dialogueStorage.store(this);
                                 tcapStack.onContinue(continueIndication);
                             } else {
                                 throw new IncorrectSyntaxException();
@@ -1186,43 +1185,34 @@ public class TCAPDialogue implements Runnable {
 
     //Component coordination part
     public void tcURejectRequest(Short invokeId, InvokeProblem invokeProblem) {
-        try {
-            mutex.lock();
-            RejectImpl reject = new RejectImpl();
-            reject.setInvokeId(invokeId);
-            reject.setProblem(new ProblemImpl(invokeProblem));
-            components.add(reject);
-        } finally {
-            mutex.unlock();
-        }
+
+        RejectImpl reject = new RejectImpl();
+        reject.setInvokeId(invokeId);
+        reject.setProblem(new ProblemImpl(invokeProblem));
+        components.add(reject);
+
     }
 
     public void tcURejectRequest(Short invokeId, ReturnResultProblem returnResultProblem) {
-        try {
-            mutex.lock();
-            RejectImpl reject = new RejectImpl();
-            reject.setInvokeId(invokeId);
-            reject.setProblem(new ProblemImpl(returnResultProblem));
 
-            this.terminateIsm(invokeId);
-            components.add(reject);
-        } finally {
-            mutex.unlock();
-        }
+        RejectImpl reject = new RejectImpl();
+        reject.setInvokeId(invokeId);
+        reject.setProblem(new ProblemImpl(returnResultProblem));
+
+        this.terminateIsm(invokeId);
+        components.add(reject);
+
     }
 
     public void tcURejectRequest(Short invokeId, ReturnErrorProblem returnErrorProblem) {
-        try {
-            mutex.lock();
-            RejectImpl reject = new RejectImpl();
-            reject.setInvokeId(invokeId);
-            reject.setProblem(new ProblemImpl(returnErrorProblem));
 
-            this.terminateIsm(invokeId);
-            components.add(reject);
-        } finally {
-            mutex.unlock();
-        }
+        RejectImpl reject = new RejectImpl();
+        reject.setInvokeId(invokeId);
+        reject.setProblem(new ProblemImpl(returnErrorProblem));
+
+        this.terminateIsm(invokeId);
+        components.add(reject);
+
     }
 
     public void sendUserError(Short invokeId, int errorCode) {
@@ -1230,83 +1220,67 @@ public class TCAPDialogue implements Runnable {
     }
 
     public void sendUserError(Short invokeId, int errorCode, ParameterImpl parameter) {
-        try {
-            mutex.lock();
-            ReturnErrorImpl returnError = ComponentFactory.createReturnErrorComponent();
-            returnError.setErrorCode(new ErrorCodeImpl(errorCode));
-            returnError.setInvokeId(invokeId);
-            returnError.setParameter(parameter);
-            components.add(returnError);
-        } finally {
-            mutex.unlock();
-        }
+
+        ReturnErrorImpl returnError = ComponentFactory.createReturnErrorComponent();
+        returnError.setErrorCode(new ErrorCodeImpl(errorCode));
+        returnError.setInvokeId(invokeId);
+        returnError.setParameter(parameter);
+        components.add(returnError);
+
     }
 
     public void sendResult(Short invokeId, int opcode, ParameterImpl parameter) {
-        try {
-            mutex.lock();
-            ReturnResultLastImpl returnResultLast = ComponentFactory.createReturnResultLastComponent();
-            returnResultLast.setInvokeId(invokeId);
-            returnResultLast.setOperationCode(new OperationCodeImpl(opcode));
-            returnResultLast.setParameter(parameter);
-            components.add(returnResultLast);
-        } finally {
-            mutex.unlock();
-        }
+
+        ReturnResultLastImpl returnResultLast = ComponentFactory.createReturnResultLastComponent();
+        returnResultLast.setInvokeId(invokeId);
+        returnResultLast.setOperationCode(new OperationCodeImpl(opcode));
+        returnResultLast.setParameter(parameter);
+        components.add(returnResultLast);
+
     }
 
     public void sendResult(Short invokeId, ParameterImpl parameter) {
-        try {
-            mutex.lock();
-            ReturnResultLastImpl returnResultLast = ComponentFactory.createReturnResultLastComponent();
-            returnResultLast.setInvokeId(invokeId);
-            returnResultLast.setParameter(parameter);
-            components.add(returnResultLast);
-        } finally {
-            mutex.unlock();
-        }
+
+        ReturnResultLastImpl returnResultLast = ComponentFactory.createReturnResultLastComponent();
+        returnResultLast.setInvokeId(invokeId);
+        returnResultLast.setParameter(parameter);
+        components.add(returnResultLast);
+
     }
 
     public void sendResult(Short invokeId) {
-        try {
-            mutex.lock();
-            ReturnResultLastImpl returnResultLast = ComponentFactory.createReturnResultLastComponent();
-            returnResultLast.setInvokeId(invokeId);
-            components.add(returnResultLast);
-        } finally {
-            mutex.unlock();
-        }
+
+        ReturnResultLastImpl returnResultLast = ComponentFactory.createReturnResultLastComponent();
+        returnResultLast.setInvokeId(invokeId);
+        components.add(returnResultLast);
+
     }
 
     public void sendRequest(Short invokeId, int operationCode, ParameterImpl parameters) throws Exception {
-        try {
-            mutex.lock();
-            ReturnResultNotLastImpl returnResultNotLast = ComponentFactory.createReturnResultComponent();
-            returnResultNotLast.setInvokeId(invokeId);
-            returnResultNotLast.setOperationCode(new OperationCodeImpl(operationCode));
-            returnResultNotLast.setParameter(parameters);
-            components.add(returnResultNotLast);
-        } finally {
-            mutex.unlock();
-        }
+
+
+        ReturnResultNotLastImpl returnResultNotLast = ComponentFactory.createReturnResultComponent();
+        returnResultNotLast.setInvokeId(invokeId);
+        returnResultNotLast.setOperationCode(new OperationCodeImpl(operationCode));
+        returnResultNotLast.setParameter(parameters);
+        components.add(returnResultNotLast);
+
     }
 
     public Short sendInvoke(int operationCode, OperationClass opClass, ParameterImpl parameters, long timeout) {
-        try {
-            mutex.lock();
-            Short invokeId = (short) invokeIdCounter.getAndIncrement();
-            OperationCodeImpl _operationCode = new OperationCodeImpl(operationCode);
-            InvokeImpl invoke = ComponentFactory.createInvokeComponent();
-            invoke.setInvokeClass(opClass);
-            invoke.setInvokeId(invokeId);
-            invoke.setOpCode(_operationCode);
-            invoke.setParameter(parameters);
-            invoke.setInvokeTimeOut(timeout);
-            this.components.add(invoke);
-            return invokeId;
-        } finally {
-            mutex.unlock();
-        }
+
+
+        Short invokeId = (short) invokeIdCounter.getAndIncrement();
+        OperationCodeImpl _operationCode = new OperationCodeImpl(operationCode);
+        InvokeImpl invoke = ComponentFactory.createInvokeComponent();
+        invoke.setInvokeClass(opClass);
+        invoke.setInvokeId(invokeId);
+        invoke.setOpCode(_operationCode);
+        invoke.setParameter(parameters);
+        invoke.setInvokeTimeOut(timeout);
+        this.components.add(invoke);
+        return invokeId;
+
     }
 
     public Short sendInvoke(int operationCode, OperationClass opClass, long timeout) {
@@ -1876,7 +1850,7 @@ public class TCAPDialogue implements Runnable {
         mutex.lock();
         try {
             this.terminateAllIsms();
-            this.keepAliveTask.cancel(true);
+            this.keepAliveTask.cancel(false);
         } finally {
             mutex.unlock();
         }

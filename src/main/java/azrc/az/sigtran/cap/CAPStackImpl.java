@@ -18,7 +18,6 @@ import azrc.az.sigtran.tcap.primitives.tc.*;
 import azrc.az.sigtran.tcap.primitives.tr.TRNotice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.*;
 
 /**
@@ -54,7 +53,7 @@ public class CAPStackImpl implements CAPStack {
             this.capWorkers[i] = Executors.newFixedThreadPool(workers, new ThreadFactory() {
                 @Override
                 public Thread newThread(Runnable r) {
-                    return new Thread(r, "CAP-Worker-");
+                    return new Thread(r, "CAP-Worker");
                 }
             });
         }
@@ -684,4 +683,8 @@ public class CAPStackImpl implements CAPStack {
         return capWorkers[idx];
     }
 
+    @Override
+    public ConcurrentHashMap<Long, CAPDialogue> getDialogues() {
+        return dialogues;
+    }
 }

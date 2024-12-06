@@ -316,7 +316,7 @@ public class SCCPRoutingControlImpl implements SCCPRoutingControl {
 
                 if (logger.isDebugEnabled()) {
                     String log = ": Message need to be segmented."
-                            + " Actial UserData length is " + message.getData().length
+                            + " Actual UserData length is " + message.getData().length
                             + " configured MinNotSegmentedMessageSize is " + sccpStack.getMinNotSegmentedMessageSize()
                             + " Generated SLR = " + segmentationLocalReference
                             + " RS = " + rs + calledParty;

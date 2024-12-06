@@ -16,7 +16,7 @@ import azrc.az.sigtran.cap.callcontrol.general.AssistRequestInstructionArg;
 import azrc.az.sigtran.cap.callcontrol.v4.ApplyChargingArg;
 import azrc.az.sigtran.cap.callcontrol.v4.ConnectArgImpl;
 import azrc.az.sigtran.cap.callcontrol.v4.EstablishTemporaryConnectionArg;
-import azrc.az.sigtran.cap.callcontrol.v4.EventReportBCSMArgImpl;
+import azrc.az.sigtran.cap.callcontrol.v4.EventReportBCSMV4ArgImpl;
 import azrc.az.sigtran.cap.callcontrol.v4.InitialDpArgImpl;
 import azrc.az.sigtran.cap.callcontrol.v4.PlayAnnouncementArg;
 import azrc.az.sigtran.cap.callcontrol.v4.ReleaseCallArg;
@@ -44,7 +44,6 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 /**
  *
  * @author eatakishiyev
@@ -262,7 +261,7 @@ public class CAPDialogueV4 extends CAPDialogue {
             throw new NoServiceParameterAvailableException();
         }
 
-        EventReportBCSMArgImpl eventReportBCSMArg = new EventReportBCSMArgImpl();
+        EventReportBCSMV4ArgImpl eventReportBCSMArg = new EventReportBCSMV4ArgImpl();
         eventReportBCSMArg.decode(new AsnInputStream(parameter.getData()));
 
         long timeOut = 0;
@@ -496,7 +495,7 @@ public class CAPDialogueV4 extends CAPDialogue {
         }
     }
 
-    public Short sendCAPEventReportBCSM(EventReportBCSMArgImpl eventReportBCSMArg) throws IllegalNumberFormatException, IncorrectSyntaxException, UnexpectedDialogueStateException, UnexpectedDataException {
+    public Short sendCAPEventReportBCSM(EventReportBCSMV4ArgImpl eventReportBCSMArg) throws IllegalNumberFormatException, IncorrectSyntaxException, UnexpectedDialogueStateException, UnexpectedDataException {
         try {
             getTcapDialogue().getLock().lock();
             if (this.getState() == DialogueState.WAIT_FOR_USER_REQUESTS

@@ -21,7 +21,6 @@ import azrc.az.sigtran.tcap.primitives.tc.TCResult;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
@@ -428,7 +427,6 @@ public class MAPShortMessageGatewayDialogue extends MAPDialogue {
             sendRoutingInfoForSMRes.decode((indication.getParameter().getData()));
 
             worker.submit(() -> {
-                logger.debug("SendRoutingInfoForSmConfirmation submitted to user {}", getMAPUser());
                 ((MAPShortMessageGatewayContextListener) getMAPUser()).onMAPSendRoutingInfoSmConfirmation(indication.getInvokeId(),
                         sendRoutingInfoForSMRes, this, null, null);
             });

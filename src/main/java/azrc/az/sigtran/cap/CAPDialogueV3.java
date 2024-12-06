@@ -13,7 +13,7 @@ import azrc.az.sigtran.cap.callcontrol.general.ReleaseCallArg;
 import azrc.az.sigtran.cap.callcontrol.v3.ApplyChargingArg;
 import azrc.az.sigtran.cap.callcontrol.v3.ConnectArgImpl;
 import azrc.az.sigtran.cap.callcontrol.v3.EstablishTemporaryConnectionArg;
-import azrc.az.sigtran.cap.callcontrol.v3.EventReportBCSMArgImpl;
+import azrc.az.sigtran.cap.callcontrol.v3.EventReportBCSMV3ArgImpl;
 import azrc.az.sigtran.cap.callcontrol.v3.InitialDpArgImpl;
 import azrc.az.sigtran.cap.callcontrol.v3.RequestReportBCSMEventArgImpl;
 import azrc.az.sigtran.cap.smscontrol.general.ConnectSMSArg;
@@ -342,7 +342,7 @@ public class CAPDialogueV3 extends CAPDialogue {
             throw new NoServiceParameterAvailableException();
         }
 
-        EventReportBCSMArgImpl eventReportBCSM = new EventReportBCSMArgImpl();
+        EventReportBCSMV3ArgImpl eventReportBCSM = new EventReportBCSMV3ArgImpl();
         eventReportBCSM.decode(new AsnInputStream(parameter.getData()));
 
         long timeOut = 0;
@@ -515,7 +515,7 @@ public class CAPDialogueV3 extends CAPDialogue {
         }
     }
 
-    public Short sendCAPEventReportBCSM(EventReportBCSMArgImpl eventReportBCSM) throws UnexpectedDialogueStateException, IncorrectSyntaxException, IllegalNumberFormatException, UnexpectedDataException {
+    public Short sendCAPEventReportBCSM(EventReportBCSMV3ArgImpl eventReportBCSM) throws UnexpectedDialogueStateException, IncorrectSyntaxException, IllegalNumberFormatException, UnexpectedDataException {
         try {
             getTcapDialogue().getLock().lock();
             if (this.getState() == DialogueState.WAIT_FOR_USER_REQUESTS

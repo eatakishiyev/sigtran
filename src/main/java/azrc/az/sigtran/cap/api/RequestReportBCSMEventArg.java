@@ -5,18 +5,21 @@
  */
 package azrc.az.sigtran.cap.api;
 
+import azrc.az.sigtran.cap.callcontrol.general.EventTypeBCSM;
 import azrc.az.sigtran.common.exceptions.IncorrectSyntaxException;
 import azrc.az.sigtran.common.exceptions.ParameterOutOfRangeException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 
 /**
- *
  * @author eatakishiyev
  */
-public interface RequestReportBCSMEventArg extends CAPMessage{
+public interface RequestReportBCSMEventArg extends CAPMessage {
 
-    public void encode(AsnOutputStream aos) throws IncorrectSyntaxException, ParameterOutOfRangeException;
+    void encode(AsnOutputStream aos) throws IncorrectSyntaxException, ParameterOutOfRangeException;
 
-    public void decode(AsnInputStream ais) throws ParameterOutOfRangeException, IncorrectSyntaxException;
+    void decode(AsnInputStream ais) throws ParameterOutOfRangeException, IncorrectSyntaxException;
+
+    boolean isEventTypeBCSMRequested(EventTypeBCSM eventTypeBCSM);
+
 }

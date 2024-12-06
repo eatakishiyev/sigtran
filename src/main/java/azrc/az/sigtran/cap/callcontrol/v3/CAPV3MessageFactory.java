@@ -43,7 +43,7 @@ public class CAPV3MessageFactory {
                 message.decode(ais);
                 break;
             case EVENT_REPORT_BCSM:
-                message = new EventReportBCSMArgImpl();
+                message = new EventReportBCSMV3ArgImpl();
                 message.decode(ais);
                 break;
             case RELEASE_CALL:

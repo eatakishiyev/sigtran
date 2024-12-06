@@ -1,11 +1,9 @@
 import azrc.az.sigtran.common.exceptions.IncorrectSyntaxException;
 import azrc.az.sigtran.map.parameters.CGI;
 import azrc.az.sigtran.map.services.errors.CallBarred;
-import azrc.az.sigtran.map.services.errors.MAPUserErrorFactory;
 import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.MDC;
-import org.mobicents.protocols.asn.AsnException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.mobicents.protocols.asn.AsnInputStream;
 
 import javax.xml.bind.DatatypeConverter;
@@ -20,7 +18,6 @@ import javax.xml.bind.DatatypeConverter;
  * @author eatakishiyev
  */
 public class Test {
-    static Logger logger = LogManager.getLogger(Test.class);
 
     private static CGI cgi = new CGI();
 

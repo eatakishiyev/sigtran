@@ -22,7 +22,6 @@ import azrc.az.sigtran.utils.ByteUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.zip.CRC32;
 
 /**
@@ -31,23 +30,12 @@ import java.util.zip.CRC32;
  */
 public class MessageHandler implements Runnable {
 
-    private final static CRC32 crc32 = new CRC32();
-    private final ThreadLocal<Long> logTrackId = new ThreadLocal() {
-        @Override
-        protected Long initialValue() {
-            return new Long(0);
-        }
-
-    };
     private final Logger logger = LoggerFactory.getLogger(MessageHandler.class);
     private final byte[] data;
     private final AspImpl link;
     private final M3UAStackImpl stack;
 
     public MessageHandler(byte[] data, AspImpl link, M3UAStackImpl stack) {
-        crc32.update(data);
-        StringBuilder sb = new StringBuilder();
-        sb.append(crc32.getValue()).append("-").append(System.nanoTime());
         this.data = data;
         this.link = link;
         this.stack = stack;
@@ -174,8 +162,8 @@ public class MessageHandler implements Runnable {
                                     if (user != null) {
                                         user.onMtpTransferIndication(m3UATransferMessage);
                                     } else {
-                                        logger.error(String.format("%s:[M3UAMessageHandler]:Received PayloadData with RoutingContext parameter."
-                                                + "No user found for received RoutingContext", logTrackId));
+                                        logger.error(("[M3UAMessageHandler]:Received PayloadData with RoutingContext parameter."
+                                                + "No user found for received RoutingContext"));
                                     }
                                 }
                             } else {
@@ -189,26 +177,26 @@ public class MessageHandler implements Runnable {
                                     //from a peer without a Routing Context parameter and it is not known
                                     //by configuration data which Application Servers are referenced.
                                     link.sendError(ErrorCodes.NO_CONFIGURED_AS_FOR_ASP, null, null);
-                                    logger.error(String.format("%s:[M3UAMessageHandler]:Received PayloadData without RoutingContext parameter."
-                                            + "But there are more than one As configured. Sending error NO_CONFIGURED_AS_FOR_ASP", logTrackId));
+                                    logger.error(("[M3UAMessageHandler]:Received PayloadData without RoutingContext parameter."
+                                            + "But there are more than one As configured. Sending error NO_CONFIGURED_AS_FOR_ASP"));
                                 } else {
                                     As as = stack.getM3uaManagement().getNullRcAs();
                                     if (as == null) {
-                                        logger.error(String.format("%s:[M3UAMessageHandler]:No application servers configured on this node", logTrackId));
+                                        logger.error(("[M3UAMessageHandler]:No application servers configured on this node"));
                                     } else if (as.getCurrentState().getName().equals(AsState.AS_ACTIVE.value())
                                             || as.getCurrentState().getName().equals(AsState.AS_PENDIGN.value())) {
                                         M3UAUser user = stack.getUser(si);
                                         if (user != null) {
                                             if (logger.isDebugEnabled()) {
-                                                logger.debug(String.format("%s:[M3UAMessageHandler].Passing data to the user. ", logTrackId));
+                                                logger.debug(("[M3UAMessageHandler].Passing data to the user. "));
                                             }
                                             user.onMtpTransferIndication(m3UATransferMessage);
                                         } else {
-                                            logger.error(String.format("%s:[M3UAMessageHandler]:No user found.", logTrackId));
+                                            logger.error(("[M3UAMessageHandler]:No user found."));
                                         }
                                     } else {
-                                        logger.error(String.format("%s:[M3UAMessageHandler]:"
-                                                + " AS State machine is not in AS_ACTIVE/AS_PENDING state to handle incoming message", logTrackId));
+                                        logger.error(("[M3UAMessageHandler]:"
+                                                + " AS State machine is not in AS_ACTIVE/AS_PENDING state to handle incoming message"));
                                     }
                                 }
                             }
@@ -222,8 +210,8 @@ public class MessageHandler implements Runnable {
                     break;
             }
         } catch (Exception exception) {
-            logger.error(String.format("%s:[M3UAMessageHandler]:Error occured "
-                    + "while receive data. %s", logTrackId, ByteUtils.bytes2Hex(data)), exception);
+            logger.error(String.format("[M3UAMessageHandler]:Error occured "
+                    + "while receive data. %s", ByteUtils.bytes2Hex(data)), exception);
             link.sendError(ErrorCodes.PROTOCOL_ERROR, null, null);
         }
     }

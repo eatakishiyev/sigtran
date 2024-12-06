@@ -31,7 +31,6 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -698,7 +697,7 @@ public abstract class CAPDialogue<T> {
                 if (tcInvoke.getLinkedId() == null) {
                     this.processInvocation(opCode, tcInvoke);
                 } else {
-                    logger.warn("Linked operation received {}", getDialogueId());
+                    logger.warn("Linked operation received " + getDialogueId());
 //                    this.processLinkedInvocation(opCode, tcInvoke);
                 }
             } catch (IncorrectSyntaxException ex) {

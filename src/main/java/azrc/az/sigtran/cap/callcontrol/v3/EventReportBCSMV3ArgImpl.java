@@ -30,7 +30,7 @@ import org.mobicents.protocols.asn.Tag;
  *
  * @author eatakishiyev
  */
-public class EventReportBCSMArgImpl implements EventReportBCSMArg {
+public class EventReportBCSMV3ArgImpl implements EventReportBCSMArg {
 
     private EventTypeBCSM eventTypeBCSM;
     private EventSpecificInformationBCSMImpl eventSpecificInformationBCSM;
@@ -38,10 +38,10 @@ public class EventReportBCSMArgImpl implements EventReportBCSMArg {
     private MiscCallInfo miscCallInfo;
     private byte[] extensions;
 
-    public EventReportBCSMArgImpl() {
+    public EventReportBCSMV3ArgImpl() {
     }
 
-    public EventReportBCSMArgImpl(EventTypeBCSM eventTypeBCSM) {
+    public EventReportBCSMV3ArgImpl(EventTypeBCSM eventTypeBCSM) {
         this.eventTypeBCSM = eventTypeBCSM;
     }
 

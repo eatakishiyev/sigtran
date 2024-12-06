@@ -19,7 +19,6 @@ import azrc.az.sigtran.sccp.gtt.SccpEntitySet;
 import azrc.az.sigtran.sccp.messages.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -485,8 +484,8 @@ public class SCCPLayerManagement implements SCCPLayerManagementMBean {
 
 
             for (SubSystemNumber remoteSsn : remoteSignallingPoint.getRemoteSubSystems()) {
-                logger.info("[SCCP]: Registering remote SSN{} on SPC {}({})", remoteSsn,
-                        remoteSignallingPoint.getName(), remoteSignallingPoint.getSpc());
+                logger.info("[SCCP]: Registering remote SSN " + remoteSsn +" on SPC " +
+                        remoteSignallingPoint.getName() +" - " + remoteSignallingPoint.getSpc());
                 this.createRemoteSubsystem(remoteSignallingPoint.getName(), remoteSsn);
             }
         }

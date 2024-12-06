@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package azrc.az.sigtran.cap.callcontrol.v4;
-
-import java.io.IOException;
+package azrc.az.sigtran.cap.callcontrol.v2;
 
 import azrc.az.sigtran.cap.api.EventReportBCSMArg;
 import azrc.az.sigtran.cap.api.EventSpecificInformationBCSM;
+import azrc.az.sigtran.cap.callcontrol.general.EventTypeBCSM;
 import azrc.az.sigtran.cap.parameters.LegId;
 import azrc.az.sigtran.cap.parameters.MiscCallInfo;
-import azrc.az.sigtran.cap.callcontrol.general.EventTypeBCSM;
 import azrc.az.sigtran.common.exceptions.IllegalNumberFormatException;
 import azrc.az.sigtran.common.exceptions.IncorrectSyntaxException;
 import azrc.az.sigtran.common.exceptions.UnexpectedDataException;
@@ -21,16 +19,10 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 
 /**
- * EventReportBCSMArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
- * eventTypeBCSM [0] EventTypeBCSM,
- * eventSpecificInformationBCSM [2] EventSpecificInformationBCSM {bound} OPTIONAL,
- * legID [3] ReceivingSideID OPTIONAL,
- * miscCallInfo [4] MiscCallInfo DEFAULT {messageType request},
- * extensions [5] Extensions {bound} OPTIONAL, ... }
  *
  * @author eatakishiyev
  */
-public class EventReportBCSMArgImpl implements EventReportBCSMArg {
+public class EventReportBCSMV2ArgImpl implements EventReportBCSMArg {
 
     private EventTypeBCSM eventTypeBCSM;
     private EventSpecificInformationBCSMImpl eventSpecificInformationBCSM;
@@ -38,10 +30,10 @@ public class EventReportBCSMArgImpl implements EventReportBCSMArg {
     private MiscCallInfo miscCallInfo;
     private byte[] extensions;
 
-    public EventReportBCSMArgImpl() {
+    public EventReportBCSMV2ArgImpl() {
     }
 
-    public EventReportBCSMArgImpl(EventTypeBCSM eventTypeBCSM) {
+    public EventReportBCSMV2ArgImpl(EventTypeBCSM eventTypeBCSM) {
         this.eventTypeBCSM = eventTypeBCSM;
     }
 
@@ -72,7 +64,7 @@ public class EventReportBCSMArgImpl implements EventReportBCSMArg {
                 aos.FinalizeContent(lenPos_);
             }
             aos.FinalizeContent(lenPos);
-        } catch (AsnException | IOException ex) {
+        } catch (Exception ex) {
             throw new IncorrectSyntaxException(ex.getMessage());
         }
     }
@@ -86,7 +78,7 @@ public class EventReportBCSMArgImpl implements EventReportBCSMArg {
             }
 
             this.decode_(ais.readSequenceStream());
-        } catch (AsnException | IOException | IllegalNumberFormatException ex) {
+        } catch (Exception ex) {
             throw new IncorrectSyntaxException(ex.getMessage());
         }
     }
@@ -123,85 +115,57 @@ public class EventReportBCSMArgImpl implements EventReportBCSMArg {
                         throw new AsnException(String.format("Received incorrect tag. Tag[%s] TagClass[%s]", tag, ais.getTagClass()));
                 }
             }
-        } catch (AsnException | IOException ex) {
+        } catch (Exception ex) {
             throw new IncorrectSyntaxException(ex.getMessage());
         }
     }
 
-    /**
-     * @return the eventTypeBCSM
-     */
-    public EventTypeBCSM getEventTypeBCSM() {
-        return eventTypeBCSM;
-    }
-
-    /**
-     * @param eventTypeBCSM the eventTypeBCSM to set
-     */
-    public void setEventTypeBCSM(EventTypeBCSM eventTypeBCSM) {
-        this.eventTypeBCSM = eventTypeBCSM;
-    }
-
-    /**
-     * @return the eventSpecificInformation
-     */
-    @Override
-    public EventSpecificInformationBCSM getEventSpecificInformationBCSM() {
-        return eventSpecificInformationBCSM;
-    }
-
-    /**
-     * @param eventSpecificInformation the eventSpecificInformation to set
-     */
-    public void setEventSpecificInformation(EventSpecificInformationBCSMImpl eventSpecificInformation) {
-        this.eventSpecificInformationBCSM = eventSpecificInformation;
-    }
-
-    /**
-     * @return the legId
-     */
     @Override
     public LegId getLegId() {
         return legId;
     }
 
-    /**
-     * @param legId the legId to set
-     */
     @Override
     public void setLegId(LegId legId) {
         this.legId = legId;
     }
 
-    /**
-     * @return the miscCallInfo
-     */
     @Override
     public MiscCallInfo getMiscCallInfo() {
         return miscCallInfo;
     }
 
-    /**
-     * @param miscCallInfo the miscCallInfo to set
-     */
     @Override
     public void setMiscCallInfo(MiscCallInfo miscCallInfo) {
         this.miscCallInfo = miscCallInfo;
     }
 
-    /**
-     * @return the extension
-     */
     @Override
     public byte[] getExtensions() {
-        return extensions;
+        return this.extensions;
     }
 
-    /**
-     * @param extension the extension to set
-     */
     @Override
-    public void setExtensions(byte[] extension) {
-        this.extensions = extension;
+    public void setExtensions(byte[] extensions) {
+        this.extensions = extensions;
     }
+
+    @Override
+    public EventTypeBCSM getEventTypeBCSM() {
+        return eventTypeBCSM;
+    }
+
+    @Override
+    public EventSpecificInformationBCSM getEventSpecificInformationBCSM() {
+        return eventSpecificInformationBCSM;
+    }
+
+    public void setEventSpecificInformationBCSM(EventSpecificInformationBCSMImpl eventSpecificInformationBCSM) {
+        this.eventSpecificInformationBCSM = eventSpecificInformationBCSM;
+    }
+
+    public void setEventTypeBCSM(EventTypeBCSM eventTypeBCSM) {
+        this.eventTypeBCSM = eventTypeBCSM;
+    }
+
 }

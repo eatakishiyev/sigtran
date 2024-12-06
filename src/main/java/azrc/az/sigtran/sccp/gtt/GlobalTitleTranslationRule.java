@@ -15,7 +15,6 @@ import azrc.az.sigtran.sccp.globaltitle.GT0011;
 import azrc.az.sigtran.sccp.globaltitle.GT0100;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.util.regex.Pattern;
 

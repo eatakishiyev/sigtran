@@ -21,7 +21,6 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 
 /**
- *
  * @author eatakishiyev
  */
 public class RequestReportBCSMEventArgImpl implements RequestReportBCSMEventArg {
@@ -87,6 +86,15 @@ public class RequestReportBCSMEventArgImpl implements RequestReportBCSMEventArg 
         } catch (Exception ex) {
             throw new IncorrectSyntaxException(ex.getMessage());
         }
+    }
+
+    @Override
+    public boolean isEventTypeBCSMRequested(EventTypeBCSM eventTypeBCSM) {
+        for (BCSMEvent eventType : bcsmEvents) {
+            if (eventType.getEventTypeBCSM().toInt() == eventTypeBCSM.toInt())
+                return true;
+        }
+        return false;
     }
 
     private void decode_(AsnInputStream ais) throws IOException, AsnException, ParameterOutOfRangeException {

@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package azrc.az.sigtran.cap.callcontrol.v2;
+package azrc.az.sigtran.cap.callcontrol.v1;
 
 import azrc.az.sigtran.cap.api.EventReportBCSMArg;
-import azrc.az.sigtran.cap.api.EventSpecificInformationBCSM;
 import azrc.az.sigtran.cap.callcontrol.general.EventTypeBCSM;
 import azrc.az.sigtran.cap.parameters.LegId;
 import azrc.az.sigtran.cap.parameters.MiscCallInfo;
@@ -22,7 +21,7 @@ import org.mobicents.protocols.asn.Tag;
  *
  * @author eatakishiyev
  */
-public class EventReportBCSMArgImpl implements EventReportBCSMArg {
+public class EventReportBCSMV1ArgImpl implements EventReportBCSMArg {
 
     private EventTypeBCSM eventTypeBCSM;
     private EventSpecificInformationBCSMImpl eventSpecificInformationBCSM;
@@ -30,10 +29,10 @@ public class EventReportBCSMArgImpl implements EventReportBCSMArg {
     private MiscCallInfo miscCallInfo;
     private byte[] extensions;
 
-    public EventReportBCSMArgImpl() {
+    public EventReportBCSMV1ArgImpl() {
     }
 
-    public EventReportBCSMArgImpl(EventTypeBCSM eventTypeBCSM) {
+    public EventReportBCSMV1ArgImpl(EventTypeBCSM eventTypeBCSM) {
         this.eventTypeBCSM = eventTypeBCSM;
     }
 
@@ -94,7 +93,7 @@ public class EventReportBCSMArgImpl implements EventReportBCSMArg {
 
                 switch (tag) {
                     case 0:
-                        this.eventTypeBCSM = EventTypeBCSM.fromInt((int) ais.readInteger());
+                        this.eventTypeBCSM = (EventTypeBCSM) EventTypeBCSM.fromInt((int) ais.readInteger());
                         break;
                     case 2:
                         this.eventSpecificInformationBCSM = EventSpecificInformationBCSMImpl.create();
@@ -121,6 +120,34 @@ public class EventReportBCSMArgImpl implements EventReportBCSMArg {
     }
 
     @Override
+    public EventSpecificInformationBCSMImpl getEventSpecificInformationBCSM() {
+        return eventSpecificInformationBCSM;
+    }
+
+    public void setEventSpecificInformationBCSM(EventSpecificInformationBCSMImpl eventSpecificInformationBCSM) {
+        this.eventSpecificInformationBCSM = eventSpecificInformationBCSM;
+    }
+
+    @Override
+    public EventTypeBCSM getEventTypeBCSM() {
+        return eventTypeBCSM;
+    }
+
+    public void setEventTypeBCSM(EventTypeBCSM eventTypeBCSM) {
+        this.eventTypeBCSM = eventTypeBCSM;
+    }
+
+    @Override
+    public byte[] getExtensions() {
+        return extensions;
+    }
+
+    @Override
+    public void setExtensions(byte[] extensions) {
+        this.extensions = extensions;
+    }
+
+    @Override
     public LegId getLegId() {
         return legId;
     }
@@ -138,34 +165,6 @@ public class EventReportBCSMArgImpl implements EventReportBCSMArg {
     @Override
     public void setMiscCallInfo(MiscCallInfo miscCallInfo) {
         this.miscCallInfo = miscCallInfo;
-    }
-
-    @Override
-    public byte[] getExtensions() {
-        return this.extensions;
-    }
-
-    @Override
-    public void setExtensions(byte[] extensions) {
-        this.extensions = extensions;
-    }
-
-    @Override
-    public EventTypeBCSM getEventTypeBCSM() {
-        return eventTypeBCSM;
-    }
-
-    @Override
-    public EventSpecificInformationBCSM getEventSpecificInformationBCSM() {
-        return eventSpecificInformationBCSM;
-    }
-
-    public void setEventSpecificInformationBCSM(EventSpecificInformationBCSMImpl eventSpecificInformationBCSM) {
-        this.eventSpecificInformationBCSM = eventSpecificInformationBCSM;
-    }
-
-    public void setEventTypeBCSM(EventTypeBCSM eventTypeBCSM) {
-        this.eventTypeBCSM = eventTypeBCSM;
     }
 
 }

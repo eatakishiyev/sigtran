@@ -9,7 +9,6 @@ import azrc.az.sigtran.m3ua.messages.transfer.PayloadData;
 import azrc.az.sigtran.m3ua.parameters.ProtocolData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

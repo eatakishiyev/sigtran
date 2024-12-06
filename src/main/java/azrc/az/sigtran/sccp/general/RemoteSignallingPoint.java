@@ -8,7 +8,6 @@ import azrc.az.sigtran.m3ua.parameters.Cause;
 import azrc.az.sigtran.sccp.address.SubSystemNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

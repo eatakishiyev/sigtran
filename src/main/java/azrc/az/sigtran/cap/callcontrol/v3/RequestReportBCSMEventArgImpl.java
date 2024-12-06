@@ -31,6 +31,15 @@ public class RequestReportBCSMEventArgImpl implements RequestReportBCSMEventArg 
     public RequestReportBCSMEventArgImpl() {
     }
 
+    @Override
+    public boolean isEventTypeBCSMRequested(EventTypeBCSM eventTypeBCSM) {
+        for (BCSMEvent eventType : bcsmEvents) {
+            if (eventType.getEventTypeBCSM().toInt() == eventTypeBCSM.toInt())
+                return true;
+        }
+        return false;
+    }
+
     public BCSMEvent requestAnalyzedInformation(MonitorMode monitorMode) {
         BCSMEvent event = new BCSMEvent(EventTypeBCSM.ANALYZED_INFORMATION, monitorMode);
         bcsmEvents.add(event);

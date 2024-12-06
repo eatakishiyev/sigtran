@@ -38,7 +38,6 @@ public class Sigtran {
 
     //Singleton constructor
     public Sigtran() throws Exception {
-
     }
 
     public M3UAStack createM3UAStack(M3UAConfiguration m3UAConfiguration) throws MalformedObjectNameException, NotCompliantMBeanException, InstanceAlreadyExistsException, IOException, MBeanRegistrationException {

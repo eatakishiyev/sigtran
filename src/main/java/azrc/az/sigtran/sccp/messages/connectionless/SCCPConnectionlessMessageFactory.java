@@ -11,7 +11,6 @@ import azrc.az.sigtran.sccp.messages.MessageType;
 import azrc.az.sigtran.utils.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 

@@ -23,7 +23,6 @@ import azrc.az.sigtran.utils.ByteUtils;
 import com.sun.nio.sctp.MessageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -259,7 +258,7 @@ public final class AspImpl extends Asp implements SctpListener {
         int streamNumber = msgInfo.streamNumber();
 
         ExecutorService executorService = findWorker(streamNumber);
-        executorService.execute(new MessageHandler(data, this, stack));
+        executorService.submit(new MessageHandler(data, this, stack));
     }
 
     private ExecutorService findWorker(int streamNumber) {

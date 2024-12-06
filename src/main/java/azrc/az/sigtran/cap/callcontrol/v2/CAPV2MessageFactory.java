@@ -43,7 +43,7 @@ public class CAPV2MessageFactory {
                 message.decode(ais);
                 break;
             case EVENT_REPORT_BCSM:
-                message = new EventReportBCSMArgImpl();
+                message = new EventReportBCSMV2ArgImpl();
                 message.decode(ais);
                 break;
             case INITIAL_DP:
