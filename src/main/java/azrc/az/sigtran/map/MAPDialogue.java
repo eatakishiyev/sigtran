@@ -470,6 +470,7 @@ public abstract class MAPDialogue {
     protected void onTCUAbort(TCUAbort indication) {
         try {
 //            tcapDialogue.getLock().lock();
+            logger.info("TCUAbort received. dialogId = " + getDialogueId() +" state = " + mapDialogueState );
             switch (getMAPDialogueState()) {
                 case WAIT_FOR_INIT_DATA:
                     TCUAbort tCUAbort = new TCUAbort();
@@ -481,6 +482,7 @@ public abstract class MAPDialogue {
                 case DIALOGUE_INITIATED:
                     switch (indication.getAbortReason()) {
                         case APPLICATION_CONTEXT_NAME_NOT_SUPPORTED:
+                            logger.info("TCUAbort ApplicationContext Not Supported. dialogId = " + getDialogueId() +" state = " + mapDialogueState );
                             MapOpen mapOpenCnf = new MapOpen();
                             mapOpenCnf.setResult(Result.REJECT);
                             mapOpenCnf.setRefuseReason(RefuseReason.APPLICATION_CONTEXT_NOT_SUPPORTED);
@@ -494,6 +496,7 @@ public abstract class MAPDialogue {
 
                             break;
                         case USER_SPECIFIC:
+                            logger.info("TCUAbort User Specific. dialogId = " + getDialogueId() +" state = " + mapDialogueState );
                             if (indication.getUserInformation() != null) {
                                 AsnInputStream ais = new AsnInputStream(indication.getUserInformation().getExternalData());
                                 try {
@@ -505,7 +508,7 @@ public abstract class MAPDialogue {
                                         MapPAbort mapPAbort = new MapPAbort();
                                         mapPAbort.setProviderReason(MapPAbort.ProviderReason.ABNORMAL_MAP_DIALOGUE);
                                         mapPAbort.setSource(MapPAbort.Source.MAP_PROBLEM);
-
+                                        logger.info("TCUAbort mapDialogPdu incorrect. Abnormal MAP dialog generating. dialogId = " + getDialogueId() +" state = " + mapDialogueState );
                                         this.stack.fireMapProviderAbortInd(mapPAbort, this);
                                     }
 
@@ -530,7 +533,7 @@ public abstract class MAPDialogue {
                                         this.stack.fireMapOpenConfirm(mapOpen, this);
                                     }
                                 } catch (IncorrectSyntaxException | UnexpectedDataException ex) {
-                                    logger.error("{}", ex);
+                                    logger.error("Error occurred {}", ex);
                                     //Fire UAbort to MAPUser anyway
                                     MapOpen mapOpen = new MapOpen();
                                     mapOpen.setResult(Result.REJECT);

@@ -230,8 +230,10 @@ public final class AspImpl extends Asp implements SctpListener {
         }
 
         if (sctpAssociation != null) {
-            sctpAssociation.write(payload.getData(), payload.getStreamNumber(),
-                    payload.getProtocolId());
+            if(sctpAssociation.getChannel()!= null) {
+                sctpAssociation.write(payload.getData(), payload.getStreamNumber(),
+                        payload.getProtocolId());
+            }
         } else {
             LOGGER.error(String.format("[M3UALink]:Sctp association is not established yet. %s %s",
                     this, payload));

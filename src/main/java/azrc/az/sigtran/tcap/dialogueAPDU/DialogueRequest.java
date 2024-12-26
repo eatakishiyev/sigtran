@@ -18,17 +18,16 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 
 /**
- *
  * @author root
  */
 public class DialogueRequest implements DialogRequestAPDU {
 
-    private ProtocolVersionImpl protocolVersion;
+    private ProtocolVersion protocolVersion;
     private ApplicationContext applicationContext;
     private UserInformation userInformation;
 
     protected DialogueRequest() {
-        this.protocolVersion = ParameterFactory.createProtocolVersion();
+
     }
 
     protected DialogueRequest(ApplicationContext applicationContext) {
@@ -92,6 +91,10 @@ public class DialogueRequest implements DialogRequestAPDU {
                 throw new IncorrectSyntaxException(String.format("Incorrect formed tag. CLASS = %d PRIMITIVE =%b TAG = %d", tmpAis.getTagClass(), tmpAis.isTagPrimitive(), tmpAis.getTag()));
             }
 
+            if (protocolVersion == null) {
+                this.protocolVersion = ParameterFactory.createProtocolVersion();
+            }
+
             if (tmpAis.available() > 0) {
                 tag = tmpAis.readTag();
                 if (tag == UserInformationImpl.USERINFORMATION_TAG) {
@@ -115,6 +118,11 @@ public class DialogueRequest implements DialogRequestAPDU {
     @Override
     public ProtocolVersion getProtocolVersion() {
         return this.protocolVersion;
+    }
+
+    @Override
+    public void setProtocolVersion(ProtocolVersion protocolVersion) {
+        this.protocolVersion = protocolVersion;
     }
 
     @Override

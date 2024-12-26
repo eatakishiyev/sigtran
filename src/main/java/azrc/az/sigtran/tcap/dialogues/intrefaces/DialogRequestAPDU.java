@@ -13,9 +13,11 @@ import azrc.az.sigtran.tcap.parameters.interfaces.ProtocolVersion;
  */
 public interface DialogRequestAPDU extends DialoguePDU {
 
-    public ProtocolVersion getProtocolVersion();
+     ProtocolVersion getProtocolVersion();
 
-    public void setApplicationContext(ApplicationContext ac);
+    void setProtocolVersion(ProtocolVersion protocolVersion);
 
-    public ApplicationContext getApplicationContext();
+     void setApplicationContext(ApplicationContext ac);
+
+     ApplicationContext getApplicationContext();
 }

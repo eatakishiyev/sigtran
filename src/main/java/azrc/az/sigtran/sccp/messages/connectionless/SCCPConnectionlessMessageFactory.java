@@ -88,32 +88,24 @@ public class SCCPConnectionlessMessageFactory implements Serializable {
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         SCCPMessage sccpMessage = null;
         try {
-            SCCPStackImpl stack = SCCPStackImpl.getInstance();
+
             MessageType messageType = MessageType.getInstance(bais.read());
             switch (messageType) {
                 case UDT:
                     sccpMessage = createUnitData(bais);
-                    if (stack != null) {
 
-                    }
                     break;
                 case UDTS:
                     sccpMessage = createUnitDataService(bais);
-                    if (stack != null) {
 
-                    }
                     break;
                 case XUDT:
                     sccpMessage = createExtendedUnitData(bais);
-                    if (stack != null) {
 
-                    }
                     break;
                 case XUDTS:
                     sccpMessage = createExtendedUnitDataService(bais);
-                    if (stack != null) {
 
-                    }
                     break;
             }
         } catch (Throwable th) {

@@ -71,7 +71,9 @@ public class TCAPDialogue implements Runnable {
         this.localInitiated = localInitiated;
         this.qos = qos;
         this.state = TCAPDialogueState.IDLE;
-        this.keepAliveTask = tcapStack.keepAliveScheduler.schedule(this, tcapStack.keepAliveTime, TimeUnit.SECONDS);
+        if(tcapStack != null) {
+            this.keepAliveTask = tcapStack.keepAliveScheduler.schedule(this, tcapStack.keepAliveTime, TimeUnit.SECONDS);
+        }
     }
 
     public void userCancel(Short invokeId) throws Exception {
@@ -523,6 +525,7 @@ public class TCAPDialogue implements Runnable {
                                 //Is userdata included?
                                 if (abortMessage.getUAbortCause() == null
                                         || abortMessage.getUAbortCause().length == 0) {
+                                    LOGGER.info("TCAP Abort received. PAbortCause = null and UAbortCause == null. Fire PAbort. dialog = " + dialogueId);
                                     TCPAbort tcPAbort = new TCPAbort();
                                     tcPAbort.setpAbort(PAbortCause.ABNORMAL_DIALOGUE);
                                     tcPAbort.setDialogue(this);
@@ -535,6 +538,7 @@ public class TCAPDialogue implements Runnable {
                                 //Is abstract syntax = dialogue-PDU AS
                                 if (ObjectIdentifiers.getInstance(dialoguePortion.getOidValue()) != ObjectIdentifiers.DIALOGUE_AS_ID
                                         || !dialoguePortion.isAsn()) {
+                                    LOGGER.info("TCAP Abort received dialog portion is not DialogASID. Fire PAbort. dialog = " + dialogueId);
                                     TCPAbort tcPAbort = new TCPAbort();
                                     tcPAbort.setpAbort(PAbortCause.ABNORMAL_DIALOGUE);
                                     tcPAbort.setDialogue(this);
