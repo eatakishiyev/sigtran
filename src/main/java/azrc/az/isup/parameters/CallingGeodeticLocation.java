@@ -11,7 +11,6 @@ import azrc.az.isup.enums.TypeOfShape;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-;
 import azrc.az.sigtran.common.exceptions.IncorrectSyntaxException;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
