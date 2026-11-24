@@ -11,6 +11,7 @@ import azrc.az.sigtran.cap.callcontrol.general.MonitorMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import azrc.az.sigtran.common.exceptions.IncorrectSyntaxException;
@@ -159,6 +160,10 @@ public class RequestReportBCSMEventArgImpl implements RequestReportBCSMEventArg 
         BCSMEvent event = new BCSMEvent(EventTypeBCSM.T_SERVICE_CHANGE, monitorMode);
         bcsmEvents.add(event);
         return event;
+    }
+
+    public List<BCSMEvent> getBCSMEvents(MonitorMode monitorMode) {
+        return Collections.unmodifiableList(bcsmEvents);
     }
 
     @Override

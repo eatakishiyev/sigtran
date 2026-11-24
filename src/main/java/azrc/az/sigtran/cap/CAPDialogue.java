@@ -31,6 +31,7 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -700,22 +701,21 @@ public abstract class CAPDialogue<T> {
                     logger.warn("Linked operation received " + getDialogueId());
 //                    this.processLinkedInvocation(opCode, tcInvoke);
                 }
-            } catch (IncorrectSyntaxException ex) {
+            } catch (IncorrectSyntaxException | IllegalNumberFormatException ex) {
                 logger.error("MistypedParameterException. " + this, ex);
                 tcapDialogue.tcURejectRequest(tcInvoke.getInvokeID(), InvokeProblem.MISTYPED_PARAMETER);
 
+                this.stack.fireNotice(Notifications.ABNORMAL_EVENT_RECEIVED_FROM_PEER, this);
+            } catch (UnsupportedOperationException ex) {
+                logger.error("Unsupported operation: " + opCode + " dialog: " + this, ex);
+                getTcapDialogue().tcURejectRequest(tcInvoke.getInvokeID(), InvokeProblem.UNRECOGNIZED_OPERATION);
                 this.stack.fireNotice(Notifications.ABNORMAL_EVENT_RECEIVED_FROM_PEER, this);
             } catch (ParameterOutOfRangeException ex) {
                 logger.error("MistypedParameterException." + this, ex);
                 tcapDialogue.tcURejectRequest(tcInvoke.getInvokeID(), InvokeProblem.MISTYPED_PARAMETER);
 
                 this.stack.fireNotice(Notifications.ABNORMAL_EVENT_RECEIVED_FROM_PEER, this);
-            } catch (IllegalNumberFormatException ex) {
-                logger.error("MistypedParameterException. " + this, ex);
-                tcapDialogue.tcURejectRequest(tcInvoke.getInvokeID(), InvokeProblem.MISTYPED_PARAMETER);
-
-                this.stack.fireNotice(Notifications.ABNORMAL_EVENT_RECEIVED_FROM_PEER, this);
-            } catch (UnidentifableServiceException ex) {
+            } catch (UnidentifableServiceException | UnexpectedDataException ex) {
                 logger.error("UnidentifableServiceException. " + this, ex);
 
                 if (opCode.getOperationClass() == OperationClass.CLASS3 || opCode.getOperationClass() == OperationClass.CLASS4) {
@@ -726,16 +726,6 @@ public abstract class CAPDialogue<T> {
 
                 this.stack.fireNotice(Notifications.ABNORMAL_EVENT_RECEIVED_FROM_PEER, this);
 
-            } catch (UnexpectedDataException ex) {
-                logger.error("UnidentifableServiceException. " + this, ex);
-
-                if (opCode.getOperationClass() == OperationClass.CLASS3 || opCode.getOperationClass() == OperationClass.CLASS4) {
-                    return;
-                }
-
-                this.tcapDialogue.sendUserError(tcInvoke.getInvokeID(), CAPUserErrorCodes.UNEXPECTED_DATA_VALUE.value());
-
-                this.stack.fireNotice(Notifications.ABNORMAL_EVENT_RECEIVED_FROM_PEER, this);
             } catch (NoServiceParameterAvailableException ex) {
                 logger.error("DataMissingException. " + this, ex);
 
@@ -922,7 +912,9 @@ public abstract class CAPDialogue<T> {
     }
 
 
-    private void processInvocation(OperationCodes opCode, TCInvoke indication) throws IncorrectSyntaxException, UnidentifableServiceException, NoServiceParameterAvailableException, UnexpectedDataException, ParameterOutOfRangeException, IllegalNumberFormatException {
+    private void processInvocation(OperationCodes opCode, TCInvoke indication) throws IncorrectSyntaxException,
+            UnidentifableServiceException, NoServiceParameterAvailableException, UnexpectedDataException,
+            ParameterOutOfRangeException, IllegalNumberFormatException {
 
         Short invokeId = indication.getInvokeID();
         if (opCode.getOperationClass() != OperationClass.CLASS4) {

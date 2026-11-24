@@ -71,7 +71,7 @@ public class TCAPDialogue implements Runnable {
         this.localInitiated = localInitiated;
         this.qos = qos;
         this.state = TCAPDialogueState.IDLE;
-        if(tcapStack != null) {
+        if (tcapStack != null) {
             this.keepAliveTask = tcapStack.keepAliveScheduler.schedule(this, tcapStack.keepAliveTime, TimeUnit.SECONDS);
         }
     }
@@ -1315,7 +1315,9 @@ public class TCAPDialogue implements Runnable {
 
                 if (component.getComponentType() == ComponentType.INVOKE) {
                     InvokeImpl invoke = (InvokeImpl) component;
-                    InvocationStateMachine invocationStateMachine = new InvocationStateMachine(tcapStack, this, invoke.getInvokeId(), invoke.getInvokeTimeOut(), invoke.getInvokeClass(), invoke.getOpCode().getLocalValue());
+                    InvocationStateMachine invocationStateMachine = new InvocationStateMachine(tcapStack, this,
+                            invoke.getInvokeId(), invoke.getInvokeTimeOut(), invoke.getInvokeClass(),
+                            invoke.getOpCode().getLocalValue());
                     invocationStateMachine.startInvocationTimer();
                     this.ismTable.put(invoke.getInvokeId(), invocationStateMachine);
                 }

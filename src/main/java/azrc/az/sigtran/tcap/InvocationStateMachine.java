@@ -34,7 +34,8 @@ public class InvocationStateMachine implements Runnable {
         this.operationClass = operationClass;
     }
 
-    public InvocationStateMachine(TCAPStack stack, TCAPDialogue dialogue, short invokeId, long timeOutInSeconds, OperationClass operationClass, int operationCode) {
+    public InvocationStateMachine(TCAPStack stack, TCAPDialogue dialogue, short invokeId, long timeOutInSeconds,
+                                  OperationClass operationClass, int operationCode) {
         this.stack = stack;
         this.invokeId = invokeId;
         this.timeOutInSeconds = timeOutInSeconds;
@@ -64,7 +65,9 @@ public class InvocationStateMachine implements Runnable {
     }
 
     protected void startInvocationTimer() {
-        this.invocationTimer = stack.invocationScheduler.schedule(this, timeOutInSeconds, TimeUnit.SECONDS);
+        if (timeOutInSeconds > 0) {
+            this.invocationTimer = stack.invocationScheduler.schedule(this, timeOutInSeconds, TimeUnit.SECONDS);
+        }
     }
 
     protected void stopInvocationTimer() {
@@ -86,7 +89,9 @@ public class InvocationStateMachine implements Runnable {
         if (rejectTimer != null) {
             throw new IllegalStateException();
         } else {
-            rejectTimer = stack.rejectScheduler.schedule(this, timeOutInSeconds, TimeUnit.SECONDS);
+            if (timeOutInSeconds > 0) {
+                rejectTimer = stack.rejectScheduler.schedule(this, timeOutInSeconds, TimeUnit.SECONDS);
+            }
         }
     }
 

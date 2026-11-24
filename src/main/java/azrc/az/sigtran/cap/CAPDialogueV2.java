@@ -8,6 +8,7 @@ package azrc.az.sigtran.cap;
 import java.io.IOException;
 
 import azrc.az.sigtran.cap.errors.CAPUserError;
+import azrc.az.sigtran.cap.errors.UnknownCapErrorException;
 import azrc.az.sigtran.tcap.ResourceLimitationException;
 import azrc.az.sigtran.tcap.TCAPDialogue;
 import azrc.az.sigtran.cap.callcontrol.general.ApplyChargingReportArg;
@@ -45,8 +46,8 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 public class CAPDialogueV2 extends CAPDialogue {
 
     public CAPDialogueV2(CAPStackImpl stack, CAPApplicationContexts capApplicationContext,
-            SCCPAddress destinationAddress, SCCPAddress originationAddress, MessageHandling messageHandling,
-            boolean sequenceControl) throws ResourceLimitationException {
+                         SCCPAddress destinationAddress, SCCPAddress originationAddress, MessageHandling messageHandling,
+                         boolean sequenceControl) throws ResourceLimitationException {
         super(stack, capApplicationContext, destinationAddress, originationAddress,
                 null, messageHandling, sequenceControl);
     }
@@ -56,7 +57,9 @@ public class CAPDialogueV2 extends CAPDialogue {
     }
 
     @Override
-    protected void onServiceInvocationReceived(TCInvoke invoke, OperationCodes opCode) throws IncorrectSyntaxException, IncorrectSyntaxException, UnidentifableServiceException, NoServiceParameterAvailableException, UnexpectedDataException, ParameterOutOfRangeException, IllegalNumberFormatException {
+    protected void onServiceInvocationReceived(TCInvoke invoke, OperationCodes opCode) throws IncorrectSyntaxException,
+            UnidentifableServiceException, NoServiceParameterAvailableException, UnexpectedDataException,
+            ParameterOutOfRangeException, IllegalNumberFormatException {
         switch (opCode) {
             case APPLY_CHARGING:
                 this.processApplyCharging(invoke);
@@ -91,6 +94,15 @@ public class CAPDialogueV2 extends CAPDialogue {
             case REQUEST_REPORT_BCSM_EVENT:
                 this.processRequestReportBCSMEvent(invoke);
                 break;
+            case CONTINUE:
+                this.processContinue(invoke);
+                break;
+            case ACTIVITY_TEST:
+                this.processActivityTest(invoke.getInvokeID());
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported operation: " + opCode
+                        + ". DialogId: " + getDialogueId());
         }
     }
 
@@ -107,7 +119,7 @@ public class CAPDialogueV2 extends CAPDialogue {
     }
 
     @Override
-    protected void onNegativeResultReceived(OperationCodes operation, CAPUserError userError, Short invokeId) {
+    protected void onNegativeResultReceived(OperationCodes operation, CAPUserError userError, Short invokeId)  {
         switch (operation) {
             case INITIAL_DP:
                 stack.onCAPInitialDpError(invokeId, this, userError);
@@ -191,8 +203,7 @@ public class CAPDialogueV2 extends CAPDialogue {
 
                 ParameterImpl parameter = new ParameterImpl(aos.toByteArray());
 
-                Short invokeId = tcapDialogue.sendInvoke(opCode.value(), opCode.getOperationClass(), parameter, 0);
-                return invokeId;
+                return tcapDialogue.sendInvoke(opCode.value(), opCode.getOperationClass(), parameter, 0);
             }
             throw new UnexpectedDialogueStateException(String.format("Dialogue is in unexpected state [%s]. Must be in WAIT_FOR_USER_REQUESTS | DIALOGUE_ACCEPTED | DIALOGUE_ESTABLISHED",
                     this.getState()));
@@ -546,6 +557,10 @@ public class CAPDialogueV2 extends CAPDialogue {
         int timeOut = 0;
 
         stack.onCAPRequestReportBCSM(invoke.getInvokeID(), requestReportBCSMEvent, this);
+    }
+
+    private void processContinue(TCInvoke invoke) throws NoServiceParameterAvailableException, IncorrectSyntaxException, UnexpectedDataException {
+        stack.onCAPContinue(invoke.getInvokeID(), this);
     }
 
 }

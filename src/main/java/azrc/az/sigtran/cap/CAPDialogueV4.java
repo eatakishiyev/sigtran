@@ -44,6 +44,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author eatakishiyev
@@ -53,9 +54,9 @@ public class CAPDialogueV4 extends CAPDialogue {
     private final Logger logger = LoggerFactory.getLogger(CAPDialogueV4.class);
 
     public CAPDialogueV4(CAPStackImpl stack, CAPApplicationContexts capApplicationContext,
-            SCCPAddress destinationAddress, SCCPAddress originationAddress,
-            CapGPRSReferenceNumber capGprsReferenceNumber,
-            MessageHandling messageHandling, boolean sequenceControl) throws ResourceLimitationException {
+                         SCCPAddress destinationAddress, SCCPAddress originationAddress,
+                         CapGPRSReferenceNumber capGprsReferenceNumber,
+                         MessageHandling messageHandling, boolean sequenceControl) throws ResourceLimitationException {
         super(stack, capApplicationContext, destinationAddress, originationAddress,
                 capGprsReferenceNumber, messageHandling, sequenceControl);
     }
@@ -128,6 +129,9 @@ public class CAPDialogueV4 extends CAPDialogue {
             case RELEASE_SMS:
                 this.processReleaseSms(invoke);
                 break;
+            default:
+                throw new UnsupportedOperationException("Unsupported operation: " + operationCode
+                        + ". DialogId: " + getDialogueId());
         }
     }
 
@@ -240,7 +244,7 @@ public class CAPDialogueV4 extends CAPDialogue {
         }
     }
 
-//    
+    //
     private void processInitialDp(TCInvoke invoke) throws NoServiceParameterAvailableException, ParameterOutOfRangeException, IncorrectSyntaxException, UnexpectedDataException, IncorrectSyntaxException {
         ParameterImpl parameter = invoke.getParameter();
         if (parameter == null) {

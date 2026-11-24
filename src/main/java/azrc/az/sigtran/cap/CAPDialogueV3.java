@@ -43,8 +43,8 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 public class CAPDialogueV3 extends CAPDialogue {
 
     public CAPDialogueV3(CAPStackImpl stack, CAPApplicationContexts capApplicationContext,
-            SCCPAddress destinationAddress, SCCPAddress originationAddress,
-            MessageHandling messageHandling, boolean sequenceControl) throws ResourceLimitationException {
+                         SCCPAddress destinationAddress, SCCPAddress originationAddress,
+                         MessageHandling messageHandling, boolean sequenceControl) throws ResourceLimitationException {
         super(stack, capApplicationContext, destinationAddress, originationAddress,
                 null, messageHandling, sequenceControl);
     }
@@ -54,7 +54,9 @@ public class CAPDialogueV3 extends CAPDialogue {
     }
 
     @Override
-    protected void onServiceInvocationReceived(TCInvoke invoke, OperationCodes opCode) throws IncorrectSyntaxException, IncorrectSyntaxException, UnidentifableServiceException, NoServiceParameterAvailableException, UnexpectedDataException, ParameterOutOfRangeException, IllegalNumberFormatException {
+    protected void onServiceInvocationReceived(TCInvoke invoke, OperationCodes opCode) throws IncorrectSyntaxException,
+            UnidentifableServiceException, NoServiceParameterAvailableException, UnexpectedDataException,
+            ParameterOutOfRangeException, IllegalNumberFormatException {
         switch (opCode) {
             case INITIAL_DP:
                 this.processInitialDp(invoke);
@@ -92,6 +94,9 @@ public class CAPDialogueV3 extends CAPDialogue {
             case RELEASE_SMS:
                 this.processReleaseSMS(invoke);
                 break;
+            default:
+                throw new UnsupportedOperationException("Unsupported operation: " + opCode
+                        + ". DialogId: " + getDialogueId());
         }
     }
 

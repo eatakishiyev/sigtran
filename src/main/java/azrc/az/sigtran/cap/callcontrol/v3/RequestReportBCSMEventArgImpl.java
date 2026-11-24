@@ -7,6 +7,7 @@ package azrc.az.sigtran.cap.callcontrol.v3;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import azrc.az.sigtran.cap.api.RequestReportBCSMEventArg;
@@ -123,6 +124,10 @@ public class RequestReportBCSMEventArgImpl implements RequestReportBCSMEventArg 
         BCSMEvent event = new BCSMEvent(EventTypeBCSM.T_ABANDON, monitorMode);
         bcsmEvents.add(event);
         return event;
+    }
+
+    public List<BCSMEvent> getBCSMEvents(MonitorMode monitorMode) {
+        return Collections.unmodifiableList(bcsmEvents);
     }
 
     @Override
